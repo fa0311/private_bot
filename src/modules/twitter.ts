@@ -1,16 +1,8 @@
-import { getLineProfile } from "src//utils/line";
-import { DiscordMessageModule } from "src/types/modules";
 import * as line from "@line/bot-sdk";
-import * as discord from "discord.js";
 import { LineMessageEventModule } from "src/types/modules";
-import dayjs from "dayjs";
 import "dayjs/locale/ja";
-import { makedirs, streamToBuffer } from "src/utils/webdav";
-import * as env from "src/utils/env";
-import * as webdav from "webdav";
 import axios from "axios";
 import { AxiosResponse } from "axios";
-import download from "src/utils/download";
 import { Result, Success, Failure } from "src/utils/result";
 
 export const twitterViewer: LineMessageEventModule<line.TextEventMessage> = {

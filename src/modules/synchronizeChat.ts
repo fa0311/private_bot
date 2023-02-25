@@ -52,6 +52,7 @@ export const lineSynchronizeFile: LineMessageEventModule<ContentType> = {
 export const discordSynchronize: DiscordMessageModule<discord.Message> = {
   name: "DiscordSynchronize",
   listener: async (client, message) => {
+    if (message.channelId != env.getString("DISOCRD_SYNCHRONIZE_CHAT.CHANNNEL_ID")) return;
     if (message.author.bot) return;
 
     const isImage = (e: string | null) => {

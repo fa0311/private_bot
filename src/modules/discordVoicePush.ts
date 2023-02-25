@@ -6,15 +6,20 @@ export const discordVoicePush: DiscordStateModule<discord.VoiceState> = {
   listener: async (client, before, after) => {
     const member = before.member || after.member!;
     if (after.channel && before.channel) return;
+    if (!after.channel && !before.channel) return;
+    if (member.user.bot) return;
+
+    const members = (after.channel ?? before.channel!).members.filter((e) => !e.user.bot);
+
     const message = (() => {
       if (before.channel) {
         return [
-          before.channel.members.filter((e) => !e.user.bot).size == 0 && "[通話が終了しました]",
+          members.size == 0 && "[通話が終了しました]",
           `${member.user.tag}が${before.channel.name}から退出しました`,
         ];
       } else if (after.channel) {
         return [
-          after.channel.members.filter((e) => !e.user.bot).size == 1 && "[通話が開始しました]",
+          members.size == 1 && "[通話が開始しました]",
           `${member.user.tag}が${after.channel.name}に参加しました`,
         ];
       }

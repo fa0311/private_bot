@@ -5,11 +5,10 @@ import * as webdav from "webdav";
 import LinePushClient from "src/client/linePush";
 import DiscordPushClient from "src/client/discordPush";
 import hooks from "src/modules/loader";
-import { SendChannnel } from "src/types/discord";
 import { BotConfig, BotClient } from "src/types/bot";
-import { Failure } from "src/utils/result";
 import log4js from "log4js";
-import { ListenerType } from "src/types/modules";
+import MusicQueue from "src/music";
+import * as voice from "@discordjs/voice";
 
 class Bot {
   config: BotConfig;
@@ -24,6 +23,7 @@ class Bot {
       discordPush: new DiscordPushClient(this.config.discordPush.token),
       webdav: webdav.createClient(this.config.webdav.url, this.config.webdav.args),
       logger: log4js.configure(this.config.logger.args).getLogger(this.config.logger.name),
+      music: [],
     };
   }
 

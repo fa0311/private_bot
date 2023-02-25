@@ -4,6 +4,7 @@ import LinePushClient from "src/client/linePush";
 import DiscordPushClient from "src/client/discordPush";
 import * as webdav from "webdav";
 import * as log4js from "log4js";
+import MusicQueue from "src/music";
 
 export type BotConfig = {
   line: {
@@ -38,4 +39,5 @@ export type BotClient = {
   discordPush: DiscordPushClient;
   webdav: webdav.WebDAVClient;
   logger: log4js.Logger;
+  music: MusicQueue[];
 };

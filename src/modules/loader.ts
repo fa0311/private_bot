@@ -8,6 +8,7 @@ import {
   discordSynchronize,
 } from "src/modules/synchronizeChat";
 import { twitterViewer } from "src/modules/twitter";
+import { discordMusic, discordMusicList, discordMusicSkip } from "src/modules/discordMusic";
 
 const hooks: HookType = {
   lineReadyModule: [lineReady],
@@ -31,7 +32,12 @@ const hooks: HookType = {
   lineAccountLinkMessageEventModule: [],
   lineThingsMessageEventModule: [],
   discordReadyModule: [discordReady, serPresence],
-  discordMessageCreateModule: [discordSynchronize],
+  discordMessageCreateModule: [
+    discordSynchronize,
+    discordMusic,
+    discordMusicList,
+    discordMusicSkip,
+  ],
   discordVoiceStateUpdate: [discordVoicePush],
 };
 
