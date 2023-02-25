@@ -19,9 +19,7 @@ export const twitterViewer: LineMessageEventModule<line.TextEventMessage> = {
     const re = "https?://(mobile\\.)?twitter\\.com/[a-zA-Z0-9_]{1,15}/status/([0-9]{0,19})";
     const regex = new RegExp(re, "g");
     const matches = message.text.matchAll(regex);
-
     const response: string[] = [];
-
     for (const match of matches) {
       const contents = await getTweet(match[2]);
       const data = contents.get()!.data;
