@@ -1,29 +1,29 @@
-import * as discord from "discord.js";
-import { DiscordStateModule } from "src/types/modules";
+import * as discord from 'discord.js';
+import { DiscordStateModule } from '@/types/modules';
 
 export const discordVoicePush: DiscordStateModule<discord.VoiceState> = {
-  name: "discordVoicePush",
+  name: 'discordVoicePush',
   listener: async (client, before, after) => {
-    const member = before.member || after.member!;
+    const member = before.member || after.member;
+    if (!member) return;
     if (after.channel && before.channel) return;
     if (!after.channel && !before.channel) return;
     if (member.user.bot) return;
-
-    const members = (after.channel ?? before.channel!).members.filter((e) => !e.user.bot);
+    const channel = after.channel ?? before.channel;
+    if (!channel) return;
+    const members = channel.members.filter((e) => !e.user.bot);
 
     const message = (() => {
       if (before.channel) {
         return [
-          members.size == 0 && "[通話が終了しました]",
+          members.size == 0 && '[通話が終了しました]',
           `${member.user.tag}が${before.channel.name}から退出しました`,
         ];
       } else if (after.channel) {
-        return [
-          members.size == 1 && "[通話が開始しました]",
-          `${member.user.tag}が${after.channel.name}に参加しました`,
-        ];
+        return [members.size == 1 && '[通話が開始しました]', `${member.user.tag}が${after.channel.name}に参加しました`];
       }
     })();
+    if (!message) return;
     const list = [client.linePush, client.discordPush].map((e) => e.sendList(message));
     (await Promise.all(list)).map((e) => e.get());
   },

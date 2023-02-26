@@ -1,14 +1,8 @@
-import * as discord from "discord.js";
-import * as line from "@line/bot-sdk";
-import { BotClient } from "src/types/bot";
+import * as discord from 'discord.js';
+import * as line from '@line/bot-sdk';
+import { BotClient } from '@/types/bot';
 
-import { Result, Success, Failure } from "src/utils/result";
-import { type } from "os";
-
-type LineThings =
-  | line.DeviceLinkEvent
-  | line.DeviceUnlinkEvent
-  | line.LINEThingsScenarioExecutionEvent;
+type LineThings = line.DeviceLinkEvent | line.DeviceUnlinkEvent | line.LINEThingsScenarioExecutionEvent;
 
 export type HookType = {
   lineReadyModule: ListenExpressModule[];
@@ -46,11 +40,7 @@ export type ListenExpressModule = {
 } & ModuleBase;
 
 export type LineMessageEventModule<T> = {
-  listener: (
-    client: BotClient,
-    event: line.MessageEvent,
-    message: T
-  ) => ListenerType<null | line.Message>;
+  listener: (client: BotClient, event: line.MessageEvent, message: T) => ListenerType<null | line.Message>;
 } & ModuleBase;
 
 export type LineReplyableEventModule<T> = {

@@ -1,6 +1,6 @@
-import ytdl from "ytdl-core";
-import { videoInfo } from "ytdl-core";
-import { Result, Success, Failure } from "src/utils/result";
+import ytdl from 'ytdl-core';
+import { videoInfo } from 'ytdl-core';
+import { Result, Success, Failure } from '@/utils/result';
 
 export const youtube = async (url: string): Promise<Result<videoInfo, Error>> => {
   return await ytdl

@@ -1,10 +1,10 @@
-import * as discord from "discord.js";
-import * as line from "@line/bot-sdk";
-import LinePushClient from "src/client/linePush";
-import DiscordPushClient from "src/client/discordPush";
-import * as webdav from "webdav";
-import * as log4js from "log4js";
-import MusicQueue from "src/music";
+import * as discord from 'discord.js';
+import * as line from '@line/bot-sdk';
+import LinePushClient from '@/client/linePush';
+import DiscordPushClient from '@/client/discordPush';
+import * as webdav from 'webdav';
+import * as log4js from 'log4js';
+import MusicQueue from '@/music';
 
 export type BotConfig = {
   line: {

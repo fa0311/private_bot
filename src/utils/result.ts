@@ -1,4 +1,4 @@
-export type Result<T, E extends Error> = Success<T> | Failure<E>;
+export type Result<T, E extends Error> = Success<T> | Failure<E, T>;
 
 export class Success<T> {
   readonly value: T;
@@ -13,7 +13,7 @@ export class Success<T> {
   }
 }
 
-export class Failure<E extends Error> {
+export class Failure<E extends Error, T> {
   readonly error: E;
   readonly success = false;
   readonly failure = true;
@@ -22,8 +22,7 @@ export class Failure<E extends Error> {
     this.error = error;
   }
 
-  get() {
+  get(): T {
     throw this.error;
-    return null;
   }
 }

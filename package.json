@@ -14,7 +14,7 @@
     "libsodium-wrappers": "^0.7.11",
     "log4js": "^6.8.0",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.5",
+    "typescript": "*",
     "webdav": "^4.11.2",
     "ytdl-core": "^4.11.2"
   },
@@ -24,13 +24,20 @@
     "@types/node": "^18.14.0",
     "@typescript-eslint/eslint-plugin": "^5.53.0",
     "@typescript-eslint/parser": "^5.53.0",
-    "eslint": "^8.34.0",
-    "tsconfig-paths": "^4.1.2"
+    "eslint": "^8.0.1",
+    "eslint-config-standard-with-typescript": "^34.0.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "prettier": "^2.8.4",
+    "tsconfig-paths": "^3.14.2",
+    "tscpaths": "^0.0.9"
   },
   "scripts": {
     "dev": "npx ts-node -r tsconfig-paths/register src/main.ts",
     "kill": "fuser -k 8080/tcp",
-    "start": "npx node build/main.js",
-    "build": "npx tsc -p ."
+    "start": "npx node dist/main.js",
+    "build": "npx tsc -p tsconfig.json && npx tscpaths -p tsconfig.json -s ./src -o ./dist",
+    "lint": "npx prettier --write 'src/**/*.ts' && npx eslint --fix --ext .ts src"
   }
 }

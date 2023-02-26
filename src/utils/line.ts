@@ -1,19 +1,19 @@
-import { Result, Success, Failure } from "src/utils/result";
-import * as line from "@line/bot-sdk";
+import { Result, Success, Failure } from '@/utils/result';
+import * as line from '@line/bot-sdk';
 
 export const getLineProfile = async (
   client: line.Client,
-  source: line.EventSource
+  source: line.EventSource,
 ): Promise<Result<line.Profile, Error>> => {
-  if (!source.userId) return new Failure(new Error("userId not found"));
+  if (!source.userId) return new Failure(new Error('userId not found'));
 
   return (() => {
     switch (source.type) {
-      case "user":
+      case 'user':
         return client.getProfile(source.userId);
-      case "group":
+      case 'group':
         return client.getGroupMemberProfile(source.groupId, source.userId);
-      case "room":
+      case 'room':
         return client.getRoomMemberProfile(source.roomId, source.userId);
     }
   })()

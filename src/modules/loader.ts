@@ -1,14 +1,10 @@
-import { serPresence } from "src/modules/discordSetPresence";
-import { lineReady, discordReady } from "src/modules/ready";
-import { discordVoicePush } from "src/modules/discordVoicePush";
-import { HookType } from "src/types/modules";
-import {
-  lineSynchronizeText,
-  lineSynchronizeFile,
-  discordSynchronize,
-} from "src/modules/synchronizeChat";
-import { twitterViewer } from "src/modules/twitter";
-import { discordMusic, discordMusicList, discordMusicSkip } from "src/modules/discordMusic";
+import { serPresence } from '@/modules/discordSetPresence';
+import { lineReady, discordReady } from '@/modules/ready';
+import { discordVoicePush } from '@/modules/discordVoicePush';
+import { HookType } from '@/types/modules';
+import { lineSynchronizeText, lineSynchronizeFile, discordSynchronize } from '@/modules/synchronizeChat';
+import { twitterViewer } from '@/modules/twitter';
+import { discordMusic, discordMusicList, discordMusicSkip } from '@/modules/discordMusic';
 
 const hooks: HookType = {
   lineReadyModule: [lineReady],
@@ -32,12 +28,7 @@ const hooks: HookType = {
   lineAccountLinkMessageEventModule: [],
   lineThingsMessageEventModule: [],
   discordReadyModule: [discordReady, serPresence],
-  discordMessageCreateModule: [
-    discordSynchronize,
-    discordMusic,
-    discordMusicList,
-    discordMusicSkip,
-  ],
+  discordMessageCreateModule: [discordSynchronize, discordMusic, discordMusicList, discordMusicSkip],
   discordVoiceStateUpdate: [discordVoicePush],
 };
 

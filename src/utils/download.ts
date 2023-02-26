@@ -1,15 +1,14 @@
-import axios from "axios";
-import { AxiosResponse } from "axios";
+import axios from 'axios';
 
-import { Result, Success, Failure } from "src/utils/result";
+import { Result, Success, Failure } from '@/utils/result';
 
 const download = async (url: string): Promise<Result<Uint8Array, Error>> => {
   return await axios({
-    method: "get",
+    method: 'get',
     url: url,
-    responseType: "arraybuffer",
+    responseType: 'arraybuffer',
   })
     .then((e) => new Success<Buffer>(e.data))
-    .catch((e) => new Failure<Error>(e as Error));
+    .catch((e) => new Failure<Error, Buffer>(e as Error));
 };
 export default download;

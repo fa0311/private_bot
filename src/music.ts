@@ -1,6 +1,6 @@
-import * as voice from "@discordjs/voice";
-import { Logger } from "log4js";
-import ytdl from "ytdl-core";
+import * as voice from '@discordjs/voice';
+import { Logger } from 'log4js';
+import ytdl from 'ytdl-core';
 
 class MusicQueue {
   connection: voice.VoiceConnection;
@@ -23,11 +23,12 @@ class MusicQueue {
 
   start(resource: voice.AudioResource) {
     this.player.on(voice.AudioPlayerStatus.Idle, () => {
-      if (this.state.length > 0) return this.player.play(this.pop()!);
-      this.destroy();
+      const next = this.pop();
+      if (!next) return this.destroy();
+      this.player.play(next);
     });
 
-    resource.playStream.on("error", (error) => {
+    resource.playStream.on('error', (error) => {
       this.logger.warn(error.stack);
     });
 

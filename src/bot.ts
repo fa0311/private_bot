@@ -1,14 +1,12 @@
-import express from "express";
-import * as discord from "discord.js";
-import * as line from "@line/bot-sdk";
-import * as webdav from "webdav";
-import LinePushClient from "src/client/linePush";
-import DiscordPushClient from "src/client/discordPush";
-import hooks from "src/modules/loader";
-import { BotConfig, BotClient } from "src/types/bot";
-import log4js from "log4js";
-import MusicQueue from "src/music";
-import * as voice from "@discordjs/voice";
+import express from 'express';
+import * as discord from 'discord.js';
+import * as line from '@line/bot-sdk';
+import * as webdav from 'webdav';
+import LinePushClient from '@/client/linePush';
+import DiscordPushClient from '@/client/discordPush';
+import hooks from '@/modules/loader';
+import { BotConfig, BotClient } from '@/types/bot';
+import log4js from 'log4js';
 
 class Bot {
   config: BotConfig;
@@ -31,33 +29,29 @@ class Bot {
     const app: express.Express = express();
     this.client.discord.login(this.config.discord.token);
 
-    app.post(this.config.line.route, line.middleware(this.config.line.args), (req, res) => {
+    app.post(this.config.line.route, line.middleware(this.config.line.args), (req) => {
       req.body.events.map((event: line.WebhookEvent) => this.lineEvent(event));
     });
 
     app.listen(this.config.line.port, () => {
       hooks.lineReadyModule.map((e) =>
-        e
-          .listener(this.client, this.config.line.port)
-          .catch((error) => this.failureDump(e.name, error))
+        e.listener(this.client, this.config.line.port).catch((error) => this.failureDump(e.name, error)),
       );
     });
 
     this.client.discord.once(discord.Events.ClientReady, async () => {
-      hooks.discordReadyModule.map((e) =>
-        e.listener(this.client).catch((error) => this.failureDump(e.name, error))
-      );
+      hooks.discordReadyModule.map((e) => e.listener(this.client).catch((error) => this.failureDump(e.name, error)));
     });
 
     this.client.discord.on(discord.Events.MessageCreate, (message) => {
       hooks.discordMessageCreateModule.map((e) =>
-        e.listener(this.client, message).catch((error) => this.failureDump(e.name, error))
+        e.listener(this.client, message).catch((error) => this.failureDump(e.name, error)),
       );
     });
 
     this.client.discord.on(discord.Events.VoiceStateUpdate, (before, after) => {
       hooks.discordVoiceStateUpdate.map((e) =>
-        e.listener(this.client, before, after).catch((error) => this.failureDump(e.name, error))
+        e.listener(this.client, before, after).catch((error) => this.failureDump(e.name, error)),
       );
     });
   }
@@ -65,111 +59,97 @@ class Bot {
   async lineEvent(event: line.WebhookEvent) {
     const modules = (() => {
       switch (event.type) {
-        case "message":
-          const message = event.message;
-          switch (message.type) {
-            case "text":
-              return hooks.lineTextMessageEventModule.map((e) => {
-                return e
-                  .listener(this.client, event, message)
-                  .catch((error) => this.failureDump(e.name, error));
-              });
-            case "image":
-              return hooks.lineImageMessageEventModule.map((e) => {
-                return e
-                  .listener(this.client, event, message)
-                  .catch((error) => this.failureDump(e.name, error));
-              });
-            case "video":
-              return hooks.lineVideoMessageEventModule.map((e) => {
-                return e
-                  .listener(this.client, event, message)
-                  .catch((error) => this.failureDump(e.name, error));
-              });
-            case "audio":
-              return hooks.lineAudioMessageEventModule.map((e) => {
-                return e
-                  .listener(this.client, event, message)
-                  .catch((error) => this.failureDump(e.name, error));
-              });
-            case "location":
-              return hooks.lineLocationMessageEventModule.map((e) => {
-                return e
-                  .listener(this.client, event, message)
-                  .catch((error) => this.failureDump(e.name, error));
-              });
-            case "file":
-              return hooks.lineFileMessageEventModule.map((e) => {
-                return e
-                  .listener(this.client, event, message)
-                  .catch((error) => this.failureDump(e.name, error));
-              });
-            case "sticker":
-              return hooks.lineStickerMessageEventModule.map((e) => {
-                return e
-                  .listener(this.client, event, message)
-                  .catch((error) => this.failureDump(e.name, error));
-              });
-            default:
-              return [this.failureDump("system", new Error(`Undefined message type: ${event}`))];
-          }
-        case "unsend":
+        case 'message':
+          return (() => {
+            const message = event.message;
+            switch (message.type) {
+              case 'text':
+                return hooks.lineTextMessageEventModule.map((e) => {
+                  return e.listener(this.client, event, message).catch((error) => this.failureDump(e.name, error));
+                });
+              case 'image':
+                return hooks.lineImageMessageEventModule.map((e) => {
+                  return e.listener(this.client, event, message).catch((error) => this.failureDump(e.name, error));
+                });
+              case 'video':
+                return hooks.lineVideoMessageEventModule.map((e) => {
+                  return e.listener(this.client, event, message).catch((error) => this.failureDump(e.name, error));
+                });
+              case 'audio':
+                return hooks.lineAudioMessageEventModule.map((e) => {
+                  return e.listener(this.client, event, message).catch((error) => this.failureDump(e.name, error));
+                });
+              case 'location':
+                return hooks.lineLocationMessageEventModule.map((e) => {
+                  return e.listener(this.client, event, message).catch((error) => this.failureDump(e.name, error));
+                });
+              case 'file':
+                return hooks.lineFileMessageEventModule.map((e) => {
+                  return e.listener(this.client, event, message).catch((error) => this.failureDump(e.name, error));
+                });
+              case 'sticker':
+                return hooks.lineStickerMessageEventModule.map((e) => {
+                  return e.listener(this.client, event, message).catch((error) => this.failureDump(e.name, error));
+                });
+              default:
+                return [this.failureDump('system', new Error(`Undefined message type: ${event}`))];
+            }
+          })();
+        case 'unsend':
           return hooks.lineUnsendMessageEventModule.map((e) => {
             return e.listener(this.client, event).catch((error) => this.failureDump(e.name, error));
           });
-        case "follow":
+        case 'follow':
           return hooks.lineFollowMessageEventModule.map((e) => {
             return e.listener(this.client, event).catch((error) => this.failureDump(e.name, error));
           });
-        case "unfollow":
+        case 'unfollow':
           return hooks.lineUnfollowMessageEventModule.map((e) => {
             return e.listener(this.client, event).catch((error) => this.failureDump(e.name, error));
           });
-        case "join":
+        case 'join':
           return hooks.lineJoinMessageEventModule.map((e) => {
             return e.listener(this.client, event).catch((error) => this.failureDump(e.name, error));
           });
-        case "leave":
+        case 'leave':
           return hooks.lineLeaveMessageEventModule.map((e) => {
             return e.listener(this.client, event).catch((error) => this.failureDump(e.name, error));
           });
-        case "memberJoined":
+        case 'memberJoined':
           return hooks.lineMemberJoinMessageEventModule.map((e) => {
             return e.listener(this.client, event).catch((error) => this.failureDump(e.name, error));
           });
-        case "memberLeft":
+        case 'memberLeft':
           return hooks.lineMenberLeaveMessageEventModule.map((e) => {
             return e.listener(this.client, event).catch((error) => this.failureDump(e.name, error));
           });
-        case "postback":
+        case 'postback':
           return hooks.linePostBackMessageEventModule.map((e) => {
             return e.listener(this.client, event).catch((error) => this.failureDump(e.name, error));
           });
-        case "videoPlayComplete":
+        case 'videoPlayComplete':
           return hooks.lineVideoEventMessageEventModule.map((e) => {
             return e.listener(this.client, event).catch((error) => this.failureDump(e.name, error));
           });
-        case "beacon":
+        case 'beacon':
           return hooks.lineBeaconMessageEventModule.map((e) => {
             return e.listener(this.client, event).catch((error) => this.failureDump(e.name, error));
           });
-        case "accountLink":
+        case 'accountLink':
           return hooks.lineAccountLinkMessageEventModule.map((e) => {
             return e.listener(this.client, event).catch((error) => this.failureDump(e.name, error));
           });
-        case "things":
+        case 'things':
           return hooks.lineThingsMessageEventModule.map((e) => {
             return e.listener(this.client, event).catch((error) => this.failureDump(e.name, error));
           });
         default:
-          return [this.failureDump("system", new Error(`Undefined message type: ${event}`))];
+          return [this.failureDump('system', new Error(`Undefined message type: ${event}`))];
       }
     })();
 
     const flatModules = modules.flatMap((e) => (e ? [e] : []));
-    const reply = await Promise.all(flatModules).then((module) =>
-      module.flatMap((e) => (e ? [e] : []))
-    );
+    const reply = await Promise.all(flatModules).then((module) => module.flatMap((e) => (e ? [e] : [])));
     if (reply.length > 0) {
       const replyToken = (event as line.ReplyableEvent).replyToken;
       await this.client.line.replyMessage(replyToken, reply[0]);
@@ -177,7 +157,7 @@ class Bot {
   }
 
   failureDump = (name: string, error: Error) => {
-    const message = [`[${name}]`, error.stack].join("\n");
+    const message = [`[${name}]`, error.stack].join('\n');
     this.client.logger.error(message);
   };
 }
