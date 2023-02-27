@@ -29,3 +29,4 @@ DISOCRD_SYNCHRONIZE_CHAT.CHANNNEL_ID= //  // Discord LINE同期のチャンネ�
 ```sh
 sudo systemctl link ./private-bot.service
 ```
+
