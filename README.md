@@ -25,3 +25,7 @@ DISCORD_SET_PRESENCE.ACTIVITIES_NAME= // Discordのステータス
 DISCORD_SET_PRESENCE.ACTIVITIES_URL=  // DiscordのステータスのURL
 DISOCRD_SYNCHRONIZE_CHAT.CHANNNEL_ID= //  // Discord LINE同期のチャンネルID
 ```
+
+```sh
+sudo systemctl link ./private-bot.service
+```

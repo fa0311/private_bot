@@ -39,7 +39,7 @@ const config: BotConfig = {
     name: 'BOT',
     args: {
       appenders: {
-        system: { type: 'file', filename: 'log/system.log' },
+        system: { type: 'file', filename: env.getString('LOGGER.PATH') },
         console: { type: 'console' },
       },
       categories: {

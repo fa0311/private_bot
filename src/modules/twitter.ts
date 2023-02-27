@@ -18,6 +18,7 @@ export const twitterViewer: LineMessageEventModule<line.TextEventMessage> = {
       response.push(data.user.name);
       response.push(data.text);
     }
+    if (response.length == 0) return;
     return {
       type: 'text',
       text: response.join('\n'),

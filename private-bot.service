@@ -1,0 +1,17 @@
+[Unit]
+Description= Node.js Private Bot
+
+[Service]
+Type=simple
+WorkingDirectory=/home/yuki/project/bot/
+ExecStart=/usr/local/bin/node /home/yuki/project/bot/dist/main.js
+ExecStop=/usr/bin/pkill -e node
+Restart=always
+RestartSec=2
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=testapp
+
+
+[Install]
+WantedBy=multi-user.target
