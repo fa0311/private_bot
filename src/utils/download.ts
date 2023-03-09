@@ -9,6 +9,6 @@ const download = async (url: string): Promise<Result<Uint8Array, Error>> => {
     responseType: 'arraybuffer',
   })
     .then((e) => new Success<Buffer>(e.data))
-    .catch((e) => new Failure<Error, Buffer>(e as Error));
+    .catch((e) => new Failure<Error>(e as Error));
 };
 export default download;

@@ -38,5 +38,5 @@ const getTweet = async (id: string): Promise<Result<AxiosResponse, Error>> => {
     },
   })
     .then((e) => new Success<AxiosResponse>(e))
-    .catch((e) => new Failure<Error, AxiosResponse>(e as Error));
+    .catch((e) => new Failure<Error>(e as Error));
 };

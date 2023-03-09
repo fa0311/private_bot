@@ -20,7 +20,7 @@ class DiscordPushClient extends PushClient {
         content: message,
       })
       .then((e) => new Success<AxiosResponse>(e))
-      .catch((e) => new Failure<Error, AxiosResponse>(e as Error));
+      .catch((e) => new Failure<Error>(e as Error));
   }
 }
 export default DiscordPushClient;

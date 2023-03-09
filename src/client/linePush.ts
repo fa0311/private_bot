@@ -27,7 +27,7 @@ class LinePushClient extends PushClient {
       }),
     })
       .then((e) => new Success<AxiosResponse>(e))
-      .catch((e) => new Failure<Error, AxiosResponse>(e as Error));
+      .catch((e) => new Failure<Error>(e as Error));
   }
 
   async sendImage(message?: string, image?: Uint8Array, user?: string): Promise<Result<AxiosResponse, Error>> {
@@ -47,7 +47,7 @@ class LinePushClient extends PushClient {
       data: params,
     })
       .then((e) => new Success<AxiosResponse>(e))
-      .catch((e) => new Failure<Error, AxiosResponse>(e as Error));
+      .catch((e) => new Failure<Error>(e as Error));
   }
 }
 export default LinePushClient;
