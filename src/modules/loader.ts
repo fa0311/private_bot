@@ -5,10 +5,11 @@ import { HookType } from '@/types/modules';
 import { lineSynchronizeText, lineSynchronizeFile, discordSynchronize } from '@/modules/synchronizeChat';
 import { twitterViewer } from '@/modules/twitter';
 import { discordMusic, discordMusicList, discordMusicSkip } from '@/modules/discordMusic';
+import { webArchive } from '@/modules/webArchive';
 
 const hooks: HookType = {
   lineReadyModule: [lineReady],
-  lineTextMessageEventModule: [twitterViewer, lineSynchronizeText],
+  lineTextMessageEventModule: [twitterViewer, lineSynchronizeText, webArchive],
   lineImageMessageEventModule: [lineSynchronizeFile],
   lineVideoMessageEventModule: [lineSynchronizeFile],
   lineAudioMessageEventModule: [lineSynchronizeFile],
