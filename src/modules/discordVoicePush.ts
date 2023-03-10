@@ -6,8 +6,6 @@ export const discordVoicePush: DiscordStateModule<discord.VoiceState> = {
   listener: async (client, before, after) => {
     const member = before.member || after.member;
     if (!member) return;
-    if (after.channel && before.channel) return;
-    if (!after.channel && !before.channel) return;
     if (member.user.bot) return;
     const channel = after.channel ?? before.channel;
     if (!channel) return;
