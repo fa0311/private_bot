@@ -13,7 +13,10 @@
       "args": ["-r", "tsconfig-paths/register", "src/main.ts"],
       "cwd": "${workspaceRoot}",
       "internalConsoleOptions": "openOnSessionStart",
-      "skipFiles": ["<node_internals>/**", "node_modules/**"]
+      "skipFiles": ["<node_internals>/**", "node_modules/**"],
+      "env": {
+        "DEVELP": "true"
+      }
     }
   ]
 }
