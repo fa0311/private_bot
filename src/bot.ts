@@ -4,7 +4,7 @@ import * as line from '@line/bot-sdk';
 import * as webdav from 'webdav';
 import LinePushClient from '@/client/linePush';
 import DiscordPushClient from '@/client/discordPush';
-import hooks from '@/modules/loader';
+import { mainHooks, subHookList } from '@/modules/loader';
 import { BotConfig, BotClient } from '@/types/bot';
 import log4js from 'log4js';
 
@@ -34,29 +34,36 @@ class Bot {
     });
 
     app.listen(this.config.line.port, () => {
-      hooks.lineReadyModule.map((e) =>
+      mainHooks.lineReadyModule.map((e) =>
         e.listener(this.client, this.config.line.port).catch((error) => this.failureDump(e.name, error)),
       );
     });
 
     this.client.discord.once(discord.Events.ClientReady, async () => {
-      hooks.discordReadyModule.map((e) => e.listener(this.client).catch((error) => this.failureDump(e.name, error)));
+      mainHooks.discordReadyModule.map((e) =>
+        e.listener(this.client).catch((error) => this.failureDump(e.name, error)),
+      );
     });
 
     this.client.discord.on(discord.Events.MessageCreate, (message) => {
-      hooks.discordMessageCreateModule.map((e) =>
+      mainHooks.discordMessageCreateModule.map((e) =>
         e.listener(this.client, message).catch((error) => this.failureDump(e.name, error)),
       );
     });
 
     this.client.discord.on(discord.Events.VoiceStateUpdate, (before, after) => {
-      hooks.discordVoiceStateUpdate.map((e) =>
+      mainHooks.discordVoiceStateUpdate.map((e) =>
         e.listener(this.client, before, after).catch((error) => this.failureDump(e.name, error)),
       );
     });
   }
 
   async lineEvent(event: line.WebhookEvent) {
+    const hooks = (() => {
+      const find = subHookList.find((e) => e.lineCondition(event));
+      if (find) return find;
+      return mainHooks;
+    })();
     const modules = (() => {
       switch (event.type) {
         case 'message':
