@@ -16,7 +16,7 @@
       "skipFiles": ["<node_internals>/**", "node_modules/**"],
       "env": {
         "DEVELP": "true"
-      }
+      },
     }
   ]
 }
