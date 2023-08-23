@@ -13,7 +13,7 @@ export const twitterViewer: LineMessageEventModule<line.TextEventMessage> = {
     const matches = message.text.matchAll(regex);
     const response: string[] = [];
     for (const match of matches) {
-      const data = await api.getDefaultApi().getTweetResultByRestId({ tweetId: match[2] });
+      const data = await api.getDefaultApi().getTweetResultByRestId({ tweetId: match[3] });
       response.push(data.data.user.legacy.name);
       response.push(data.data.tweet.legacy.fullText);
     }
