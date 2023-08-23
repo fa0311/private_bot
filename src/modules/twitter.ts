@@ -8,7 +8,7 @@ export const twitterViewer: LineMessageEventModule<line.TextEventMessage> = {
   listener: async (client, event, message) => {
     const api = await new TwitterOpenApi().getClient();
 
-    const re = 'https?://(mobile\\.)?twitter\\.com/[a-zA-Z0-9_]{1,15}/status/([0-9]{0,19})';
+    const re = 'https?://(mobile\\.)?(twitter|x)\\.com/[a-zA-Z0-9_]{1,15}/status/([0-9]{0,19})';
     const regex = new RegExp(re, 'g');
     const matches = message.text.matchAll(regex);
     const response: string[] = [];
