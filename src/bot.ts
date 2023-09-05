@@ -159,7 +159,7 @@ class Bot {
     const reply = await Promise.all(flatModules).then((module) => module.flatMap((e) => (e ? [e] : [])));
     if (reply.length > 0) {
       const replyToken = (event as line.ReplyableEvent).replyToken;
-      await this.client.line.replyMessage(replyToken, reply[0]);
+      await this.client.line.replyMessage(replyToken, reply);
     }
   }
 
