@@ -7,7 +7,7 @@ import { youtube } from '@/utils/youtube';
 import ytdl from 'ytdl-core';
 
 export const discordMusic: DiscordMessageModule<discord.Message> = {
-  name: 'DiscordSynchronize',
+  name: 'DiscordMusic',
   listener: async (client, message) => {
     if (message.channel.type != discord.ChannelType.GuildVoice) return;
     if (message.author.bot) return;
