@@ -6,7 +6,7 @@ import { TwitterOpenApi } from 'twitter-openapi-typescript';
 export const twitterViewer: LineMessageEventModule<line.TextEventMessage> = {
   name: 'TwitterViewer',
   listener: async (client, event, message) => {
-    const api = await new TwitterOpenApi().getClient();
+    const api = await new TwitterOpenApi().getGuestClient();
 
     const re = 'https?://(mobile\\.)?(twitter|x)\\.com/[a-zA-Z0-9_]{1,15}/status/([0-9]{0,19})';
     const regex = new RegExp(re, 'g');
@@ -14,6 +14,9 @@ export const twitterViewer: LineMessageEventModule<line.TextEventMessage> = {
     const response: string[] = [];
     for (const match of matches) {
       const data = await api.getDefaultApi().getTweetResultByRestId({ tweetId: match[3] });
+      if (!data.data) continue;
+      if (!data.data.tweet) continue;
+      if (!data.data.tweet.legacy) continue;
       response.push(data.data.user.legacy.name);
       response.push(data.data.tweet.legacy.fullText);
     }
