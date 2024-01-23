@@ -7,13 +7,14 @@ export const discordVoicePush: DiscordStateModule<discord.VoiceState> = {
     const member = before.member || after.member;
     if (!member) return;
     if (member.user.bot) return;
-    if (after.channel && before.channel) return;
     const channel = after.channel ?? before.channel;
     if (!channel) return;
     const members = channel.members.filter((e) => !e.user.bot);
 
     const message = (() => {
-      if (before.channel) {
+      if (before.channel && after.channel) {
+        return [`${member.user.tag}が${before.channel.name}から${after.channel.name}に移動しました`];
+      } else if (before.channel) {
         return [
           members.size == 0 && '[通話が終了しました]',
           `${member.user.tag}が${before.channel.name}から退出しました`,
