@@ -9,6 +9,7 @@ export const discordVoicePush: DiscordStateModule<discord.VoiceState> = {
     if (member.user.bot) return;
     const channel = after.channel ?? before.channel;
     if (!channel) return;
+    if(after.channelId == before.channelId) return;
     const members = channel.members.filter((e) => !e.user.bot);
 
     const message = (() => {
