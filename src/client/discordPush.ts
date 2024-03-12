@@ -1,15 +1,16 @@
-import PushClient from '@/client/base';
-import axios from 'axios';
-import { AxiosResponse } from 'axios';
-import { Result, Success, Failure } from '@/utils/result';
+import PushClient, { PutFileType } from '@/client/base';
+import { Failure, Result, Success } from '@/utils/result';
+import axios, { AxiosResponse } from 'axios';
 
 class DiscordPushClient extends PushClient {
   url = 'https://discordapp.com/api/webhooks/';
   token: string;
+  putFile: PutFileType;
 
-  constructor(token: string) {
+  constructor(token: string, putFile: PutFileType) {
     super();
     this.token = token;
+    this.putFile = putFile;
   }
 
   async send(message?: string, user?: string, user_image?: string): Promise<Result<AxiosResponse, Error>> {
@@ -21,6 +22,17 @@ class DiscordPushClient extends PushClient {
       })
       .then((e) => new Success<AxiosResponse>(e))
       .catch((e) => new Failure<Error>(e as Error));
+  }
+
+  async sendFile(
+    name: string,
+    contents: Uint8Array,
+    message?: string,
+    user?: string,
+    user_image?: string,
+  ): Promise<Result<AxiosResponse, Error>> {
+    const url = await this.putFile(name, contents);
+    return this.send(url, user, user_image);
   }
 }
 export default DiscordPushClient;

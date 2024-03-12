@@ -1,6 +1,6 @@
-import * as discord from 'discord.js';
-import * as line from '@line/bot-sdk';
 import { BotClient } from '@/types/bot';
+import * as line from '@line/bot-sdk';
+import * as discord from 'discord.js';
 
 type LineThings = line.DeviceLinkEvent | line.DeviceUnlinkEvent | line.LINEThingsScenarioExecutionEvent;
 
@@ -30,29 +30,9 @@ export type HookType = {
   discordVoiceStateUpdate: DiscordStateModule<discord.VoiceState>[];
 };
 
-export type SubHookType = {
-  lineCondition: (event: line.WebhookEvent) => boolean;
-  lineReadyModule: ListenExpressModule[];
-  lineTextMessageEventModule: LineMessageEventModule<line.TextEventMessage>[];
-  lineImageMessageEventModule: LineMessageEventModule<line.ImageEventMessage>[];
-  lineVideoMessageEventModule: LineMessageEventModule<line.VideoEventMessage>[];
-  lineAudioMessageEventModule: LineMessageEventModule<line.AudioEventMessage>[];
-  lineLocationMessageEventModule: LineMessageEventModule<line.LocationEventMessage>[];
-  lineFileMessageEventModule: LineMessageEventModule<line.FileEventMessage>[];
-  lineStickerMessageEventModule: LineMessageEventModule<line.StickerEventMessage>[];
-  lineUnsendMessageEventModule: LineEventModule<line.UnsendEvent>[];
-  lineFollowMessageEventModule: LineReplyableEventModule<line.FollowEvent>[];
-  lineUnfollowMessageEventModule: LineEventModule<line.UnfollowEvent>[];
-  lineJoinMessageEventModule: LineReplyableEventModule<line.JoinEvent>[];
-  lineLeaveMessageEventModule: LineEventModule<line.LeaveEvent>[];
-  lineMemberJoinMessageEventModule: LineReplyableEventModule<line.MemberJoinEvent>[];
-  lineMenberLeaveMessageEventModule: LineEventModule<line.MemberLeaveEvent>[];
-  linePostBackMessageEventModule: LineReplyableEventModule<line.PostbackEvent>[];
-  lineVideoEventMessageEventModule: LineReplyableEventModule<line.VideoPlayCompleteEvent>[];
-  lineBeaconMessageEventModule: LineReplyableEventModule<line.BeaconEvent>[];
-  lineAccountLinkMessageEventModule: LineReplyableEventModule<line.AccountLinkEvent>[];
-  lineThingsMessageEventModule: LineReplyableEventModule<LineThings>[];
-};
+export type HookFn = (event?: string) => HookType;
+
+export type Klass<T, U> = (arg: T) => U;
 
 export type ListenerType<T> = Promise<T | void | false>;
 

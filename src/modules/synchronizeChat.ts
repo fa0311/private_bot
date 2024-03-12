@@ -1,26 +1,23 @@
-import { getLineProfile } from '@/utils/line';
-import { DiscordMessageModule } from '@/types/modules';
-import * as line from '@line/bot-sdk';
-import * as discord from 'discord.js';
-import { LineMessageEventModule } from '@/types/modules';
-import dayjs from 'dayjs';
-import 'dayjs/locale/ja';
-import { makedirs, streamToBuffer } from '@/utils/webdav';
-import * as env from '@/utils/env';
-import * as webdav from 'webdav';
+import PushClient from '@/client/base';
+import { DiscordMessageModule, Klass, LineMessageEventModule } from '@/types/modules';
 import download from '@/utils/download';
+import { getLineProfile } from '@/utils/line';
+import { streamToBuffer } from '@/utils/webdav';
+import * as line from '@line/bot-sdk';
+import 'dayjs/locale/ja';
+import * as discord from 'discord.js';
 
-export const lineSynchronizeText: LineMessageEventModule<line.TextEventMessage> = {
+export const lineSynchronizeText: Klass<PushClient, LineMessageEventModule<line.TextEventMessage>> = (push) => ({
   name: 'LineSynchronizeText',
   listener: async (client, event, message) => {
     const profile = (await getLineProfile(client.line, event.source)).get();
-    (await client.discordPush.send(message.text, profile.displayName, profile.pictureUrl)).get();
+    (await push.send(message.text, profile.displayName, profile.pictureUrl)).get();
   },
-};
+});
 
 type ContentType = line.ImageEventMessage | line.VideoEventMessage | line.AudioEventMessage | line.FileEventMessage;
 
-export const lineSynchronizeFile: LineMessageEventModule<ContentType> = {
+export const lineSynchronizeFile: Klass<PushClient, LineMessageEventModule<ContentType>> = (push) => ({
   name: 'LineSynchronizeFile',
   listener: async (client, event, message) => {
     const extension = (() => {
@@ -38,64 +35,35 @@ export const lineSynchronizeFile: LineMessageEventModule<ContentType> = {
 
     const stream = await client.line.getMessageContent(message.id);
     const contents = await streamToBuffer(stream);
-    const path = await putFile(client.webdav, `${message.id}.${extension}`, contents);
     const profile = (await getLineProfile(client.line, event.source)).get();
-    const url = `${env.getString('WEBDAV.SHARE_BASE_URL')}/${path}`;
-    (await client.discordPush.send(url, profile.displayName, profile.pictureUrl)).get();
+    await push.sendFile(`${message.id}.${extension}`, contents, '', profile.displayName, profile.pictureUrl);
   },
-};
+});
 
-export const discordSynchronize: DiscordMessageModule<discord.Message> = {
+export const discordSynchronize: Klass<PushClient, DiscordMessageModule<discord.Message>> = (push) => ({
   name: 'DiscordSynchronize',
   listener: async (client, message) => {
-    if (message.channelId != env.getString('DISOCRD_SYNCHRONIZE_CHAT.CHANNNEL_ID')) return;
     if (message.author.bot) return;
 
-    const isImage = (e: string | null) => {
-      if (!e) return false;
-      if (e.split('.').length == 1) return false;
-      return ['jpeg', 'png'].includes(e.split('.').slice(-1)[0]);
-    };
     const getExtension = (e: string | null) => {
       if (!e) return '';
       if (e.split('.').length == 1) return '';
       return '.' + e.split('.').slice(-1)[0];
     };
 
-    const results = await Promise.all(message.attachments.map((e) => download(e.proxyURL)));
-    const buffer = results.map((e) => e.get());
-    const names = message.attachments.map((e) => e.id + getExtension(e.name));
-    const auther = message.author.username;
-
-    const textList = (
-      await Promise.all(
-        names.map(async (e, i) => {
-          const path = await putFile(client.webdav, e, buffer[i]);
-          if (isImage(path)) return null;
-          return `${env.getString('WEBDAV.SHARE_BASE_URL')}/${path}`;
-        }),
-      )
-    ).flatMap((e) => (e ? [e] : []));
-
-    const text = [message.content + textList.join('\n')];
-    names.map((e) => isImage(e));
-
-    const sendResults = (
-      await Promise.all(names.map((e, i) => isImage(e) && client.linePush.sendImage(text.shift(), buffer[i], auther)))
-    ).flatMap((e) => (e ? [e] : []));
-
-    if (text.length > 0) {
-      (await client.linePush.sendList(text, auther)).get();
+    if (message.content != '') {
+      const auther = message.author.username;
+      await push.send(message.content, auther);
     }
 
-    sendResults.map((e) => e.get());
-  },
-};
+    const res = message.attachments.map(async (e) => {
+      const results = await download(e.proxyURL);
+      const buffer = results.get();
+      const name = e.id + getExtension(e.name);
+      const auther = message.author.username;
+      await push.sendFile(name, buffer, message.content, auther);
+    });
 
-const putFile = async (client: webdav.WebDAVClient, name: string, contents: Uint8Array): Promise<string> => {
-  const time = dayjs(new Date()).locale('ja').format('YYYY-MM');
-  const path = `LINE/${time}/${name}`;
-  await makedirs(client, `LINE/${time}`);
-  await client.putFileContents(path, contents);
-  return path;
-};
+    await Promise.all(res);
+  },
+});

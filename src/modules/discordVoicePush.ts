@@ -1,7 +1,8 @@
+import PushClient from '@/client/base';
+import { DiscordStateModule, Klass } from '@/types/modules';
 import * as discord from 'discord.js';
-import { DiscordStateModule } from '@/types/modules';
 
-export const discordVoicePush: DiscordStateModule<discord.VoiceState> = {
+export const discordVoicePush: Klass<PushClient, DiscordStateModule<discord.VoiceState>> = (push) => ({
   name: 'discordVoicePush',
   listener: async (client, before, after) => {
     const member = before.member || after.member;
@@ -9,7 +10,7 @@ export const discordVoicePush: DiscordStateModule<discord.VoiceState> = {
     if (member.user.bot) return;
     const channel = after.channel ?? before.channel;
     if (!channel) return;
-    if(after.channelId == before.channelId) return;
+    if (after.channelId == before.channelId) return;
     const members = channel.members.filter((e) => !e.user.bot);
 
     const message = (() => {
@@ -25,7 +26,6 @@ export const discordVoicePush: DiscordStateModule<discord.VoiceState> = {
       }
     })();
     if (!message) return;
-    const list = [client.linePush, client.discordPush].map((e) => e.sendList(message));
-    (await Promise.all(list)).map((e) => e.get());
+    await push.sendList(message);
   },
-};
+});

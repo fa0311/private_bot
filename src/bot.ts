@@ -1,28 +1,23 @@
-import express from 'express';
-import * as discord from 'discord.js';
+import { BotClient, BotConfig } from '@/types/bot';
+import { HookFn } from '@/types/modules';
 import * as line from '@line/bot-sdk';
-import * as webdav from 'webdav';
-import LinePushClient from '@/client/linePush';
-import DiscordPushClient from '@/client/discordPush';
-import { mainHooks, subHookList } from '@/modules/loader';
-import { BotConfig, BotClient } from '@/types/bot';
+import * as discord from 'discord.js';
+import express from 'express';
 import log4js from 'log4js';
 
 class Bot {
   config: BotConfig;
   client: BotClient;
+  hook: HookFn;
 
-  constructor(config: BotConfig) {
+  constructor(config: BotConfig, hook: HookFn) {
     this.config = config;
     this.client = {
       line: new line.Client(this.config.line.args),
-      linePush: new LinePushClient(this.config.linePush.token),
       discord: new discord.Client(this.config.discord.args),
-      discordPush: new DiscordPushClient(this.config.discordPush.token),
-      webdav: webdav.createClient(this.config.webdav.url, this.config.webdav.args),
       logger: log4js.configure(this.config.logger.args).getLogger(this.config.logger.name),
-      music: [],
     };
+    this.hook = hook;
   }
 
   start() {
@@ -34,36 +29,45 @@ class Bot {
     });
 
     app.listen(this.config.line.port, () => {
-      mainHooks.lineReadyModule.map((e) =>
+      this.hook().lineReadyModule.map((e) =>
         e.listener(this.client, this.config.line.port).catch((error) => this.failureDump(e.name, error)),
       );
     });
 
     this.client.discord.once(discord.Events.ClientReady, async () => {
-      mainHooks.discordReadyModule.map((e) =>
+      this.hook().discordReadyModule.map((e) =>
         e.listener(this.client).catch((error) => this.failureDump(e.name, error)),
       );
     });
 
     this.client.discord.on(discord.Events.MessageCreate, (message) => {
-      mainHooks.discordMessageCreateModule.map((e) =>
+      const event = message.channel.id;
+      this.hook(event).discordMessageCreateModule.map((e) =>
         e.listener(this.client, message).catch((error) => this.failureDump(e.name, error)),
       );
     });
 
     this.client.discord.on(discord.Events.VoiceStateUpdate, (before, after) => {
-      mainHooks.discordVoiceStateUpdate.map((e) =>
+      const event = before.guild.id;
+      this.hook(event).discordVoiceStateUpdate.map((e) =>
         e.listener(this.client, before, after).catch((error) => this.failureDump(e.name, error)),
       );
     });
   }
 
+  getSorceId(event: line.WebhookEvent): string {
+    switch (event.source.type) {
+      case 'user':
+        return event.source.userId;
+      case 'group':
+        return event.source.groupId;
+      case 'room':
+        return event.source.roomId;
+    }
+  }
+
   async lineEvent(event: line.WebhookEvent) {
-    const hooks = (() => {
-      const find = subHookList.find((e) => e.lineCondition(event));
-      if (find) return find;
-      return mainHooks;
-    })();
+    const hooks = this.hook(this.getSorceId(event));
     const modules = (() => {
       switch (event.type) {
         case 'message':

@@ -1,10 +1,6 @@
-import * as discord from 'discord.js';
 import * as line from '@line/bot-sdk';
-import LinePushClient from '@/client/linePush';
-import DiscordPushClient from '@/client/discordPush';
-import * as webdav from 'webdav';
+import * as discord from 'discord.js';
 import * as log4js from 'log4js';
-import MusicQueue from '@/music';
 
 export type BotConfig = {
   line: {
@@ -12,19 +8,9 @@ export type BotConfig = {
     port: number;
     route: string;
   };
-  linePush: {
-    token: string;
-  };
   discord: {
     args: discord.ClientOptions;
     token: string;
-  };
-  discordPush: {
-    token: string;
-  };
-  webdav: {
-    url: string;
-    args: webdav.WebDAVClientOptions;
   };
   logger: {
     name: string;
@@ -34,10 +20,6 @@ export type BotConfig = {
 
 export type BotClient = {
   line: line.Client;
-  linePush: LinePushClient;
   discord: discord.Client;
-  discordPush: DiscordPushClient;
-  webdav: webdav.WebDAVClient;
   logger: log4js.Logger;
-  music: MusicQueue[];
 };

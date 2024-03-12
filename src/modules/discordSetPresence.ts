@@ -1,7 +1,6 @@
-import * as env from '@/utils/env';
-import { DiscordClientReadyModule } from '@/types/modules';
+import { DiscordClientReadyModule, Klass } from '@/types/modules';
 
-export const serPresence: DiscordClientReadyModule = {
+export const serPresence: Klass<{ name: string; url: string }, DiscordClientReadyModule> = ({ name, url }) => ({
   name: 'discordSetPresence',
   listener: async (client) => {
     if (client.discord.user == null) throw Error(`client.user is null`);
@@ -9,10 +8,10 @@ export const serPresence: DiscordClientReadyModule = {
       status: 'online',
       activities: [
         {
-          name: env.getString('DISCORD_SET_PRESENCE.ACTIVITIES_NAME'),
-          url: env.getString('DISCORD_SET_PRESENCE.ACTIVITIES_URL'),
+          name: name,
+          url: url,
         },
       ],
     });
   },
-};
+});

@@ -1,110 +1,115 @@
-import { DiscordMessageModule } from '@/types/modules';
-import * as discord from 'discord.js';
-import 'dayjs/locale/ja';
-import * as voice from '@discordjs/voice';
-import MusicQueue from '@/music';
+import MusicQueue from '@/client/music';
+import { DiscordMessageModule, Klass } from '@/types/modules';
 import { youtube } from '@/utils/youtube';
+import * as voice from '@discordjs/voice';
+import 'dayjs/locale/ja';
+import * as discord from 'discord.js';
 import ytdl from 'ytdl-core';
 
-export const discordMusic: DiscordMessageModule<discord.Message> = {
-  name: 'DiscordMusic',
-  listener: async (client, message) => {
-    if (message.channel.type != discord.ChannelType.GuildVoice) return;
-    if (message.author.bot) return;
-    const command = message.content.split(' ');
-    if (command[0] != 'play') return;
+export const discordMusic: Klass<undefined, DiscordMessageModule<discord.Message>[]> = () => {
+  let musicQueue: MusicQueue[] = [];
 
-    if (!message.member?.voice.channelId) return;
-    if (!message.guildId) return;
-    if (!message.guild) return;
-
-    client.music = client.music.filter((e) => e.connection.state.status != voice.VoiceConnectionStatus.Destroyed);
-
-    const yt = ytdl(command[1], {
-      filter: 'audioonly',
-      highWaterMark: 1 << 62,
-      liveBuffer: 1 << 62,
-      dlChunkSize: 0,
-      quality: 'lowestaudio',
-    });
-    const info = (await youtube(command[1])).get();
-
-    yt.on('error', (stream) => {
+  const music: DiscordMessageModule<discord.Message> = {
+    name: 'DiscordMusic',
+    listener: async (client, message) => {
       if (message.channel.type != discord.ChannelType.GuildVoice) return;
-      message.channel.send(stream.message);
-      client.logger.warn(stream.stack);
-    });
+      if (message.author.bot) return;
+      const command = message.content.split(' ');
+      if (command[0] != 'play') return;
 
-    const queue = getConnection(client.music, message.guildId);
-    if (queue) {
-      queue.push(voice.createAudioResource(yt));
-      queue.info.push(info);
-      message.channel.send(`\`${queue.state.length + 1} ${getTitle(info.videoDetails)}\``);
-    } else {
-      const connection = voice.joinVoiceChannel({
-        channelId: message.member?.voice.channelId,
-        guildId: message.guildId,
-        adapterCreator: message.guild.voiceAdapterCreator,
+      if (!message.member?.voice.channelId) return;
+      if (!message.guildId) return;
+      if (!message.guild) return;
+
+      musicQueue = musicQueue.filter((e) => e.connection.state.status != voice.VoiceConnectionStatus.Destroyed);
+
+      const yt = ytdl(command[1], {
+        filter: 'audioonly',
+        highWaterMark: 1 << 62,
+        liveBuffer: 1 << 62,
+        dlChunkSize: 0,
+        quality: 'lowestaudio',
       });
-      const queue = new MusicQueue(message.guildId, connection, client.logger);
-      queue.start(voice.createAudioResource(yt));
-      queue.info.push(info);
-      client.music.push(queue);
-      message.channel.send(`\`${queue.state.length + 1} ${getTitle(info.videoDetails)}\``);
-    }
-  },
-};
+      const info = (await youtube(command[1])).get();
 
-export const discordMusicList: DiscordMessageModule<discord.Message> = {
-  name: 'DiscordMusicList',
-  listener: async (client, message) => {
-    if (message.channel.type != discord.ChannelType.GuildVoice) return;
-    if (message.author.bot) return;
-    const command = message.content.split(' ');
-    if (command[0] != 'list') return;
+      yt.on('error', (stream) => {
+        if (message.channel.type != discord.ChannelType.GuildVoice) return;
+        message.channel.send(stream.message);
+        client.logger.warn(stream.stack);
+      });
 
-    if (!message.member?.voice.channelId) return;
-    if (!message.guildId) return;
-    if (!message.guild) return;
-
-    const queue = getConnection(client.music, message.guildId);
-
-    if (queue) {
-      message.channel.send(queue.info.map((e, i) => `\`${i + 1} ${getTitle(e.videoDetails)}\``).join('\n'));
-    }
-  },
-};
-
-export const discordMusicSkip: DiscordMessageModule<discord.Message> = {
-  name: 'DiscordMusicSkip',
-  listener: async (client, message) => {
-    if (message.channel.type != discord.ChannelType.GuildVoice) return;
-    if (message.author.bot) return;
-    const command = message.content.split(' ');
-    if (command[0] != 'skip') return;
-
-    if (!message.member?.voice.channelId) return;
-    if (!message.guildId) return;
-    if (!message.guild) return;
-
-    const key = command[1] ? Number.parseInt(command[1]) : 1;
-
-    const queue = getConnection(client.music, message.guildId);
-
-    if (queue) {
-      if (key == 1 && queue.state.length > 0) {
-        message.channel.send(`\`${getTitle(queue.info[0].videoDetails)}\``);
-        const next = queue.pop();
-        if (!next) return;
-        queue.player.play(next);
-      } else if (key == 1 && queue.state.length == 0) {
-        queue.destroy();
-      } else if (key > 1 && queue.state.length > key - 2) {
-        message.channel.send(`\`${getTitle(queue.info[key - 1].videoDetails)}\``);
-        queue.remove(key - 2);
+      const queue = getConnection(musicQueue, message.guildId);
+      if (queue) {
+        queue.push(voice.createAudioResource(yt));
+        queue.info.push(info);
+        message.channel.send(`\`${queue.state.length + 1} ${getTitle(info.videoDetails)}\``);
+      } else {
+        const connection = voice.joinVoiceChannel({
+          channelId: message.member?.voice.channelId,
+          guildId: message.guildId,
+          adapterCreator: message.guild.voiceAdapterCreator,
+        });
+        const queue = new MusicQueue(message.guildId, connection, client.logger);
+        queue.start(voice.createAudioResource(yt));
+        queue.info.push(info);
+        musicQueue.push(queue);
+        message.channel.send(`\`${queue.state.length + 1} ${getTitle(info.videoDetails)}\``);
       }
-    }
-  },
+    },
+  };
+
+  const musicList: DiscordMessageModule<discord.Message> = {
+    name: 'DiscordMusicList',
+    listener: async (client, message) => {
+      if (message.channel.type != discord.ChannelType.GuildVoice) return;
+      if (message.author.bot) return;
+      const command = message.content.split(' ');
+      if (command[0] != 'list') return;
+
+      if (!message.member?.voice.channelId) return;
+      if (!message.guildId) return;
+      if (!message.guild) return;
+
+      const queue = getConnection(musicQueue, message.guildId);
+
+      if (queue) {
+        message.channel.send(queue.info.map((e, i) => `\`${i + 1} ${getTitle(e.videoDetails)}\``).join('\n'));
+      }
+    },
+  };
+
+  const musicSkip: DiscordMessageModule<discord.Message> = {
+    name: 'DiscordMusicSkip',
+    listener: async (client, message) => {
+      if (message.channel.type != discord.ChannelType.GuildVoice) return;
+      if (message.author.bot) return;
+      const command = message.content.split(' ');
+      if (command[0] != 'skip') return;
+
+      if (!message.member?.voice.channelId) return;
+      if (!message.guildId) return;
+      if (!message.guild) return;
+
+      const key = command[1] ? Number.parseInt(command[1]) : 1;
+
+      const queue = getConnection(musicQueue, message.guildId);
+
+      if (queue) {
+        if (key == 1 && queue.state.length > 0) {
+          message.channel.send(`\`${getTitle(queue.info[0].videoDetails)}\``);
+          const next = queue.pop();
+          if (!next) return;
+          queue.player.play(next);
+        } else if (key == 1 && queue.state.length == 0) {
+          queue.destroy();
+        } else if (key > 1 && queue.state.length > key - 2) {
+          message.channel.send(`\`${getTitle(queue.info[key - 1].videoDetails)}\``);
+          queue.remove(key - 2);
+        }
+      }
+    },
+  };
+  return [music, musicList, musicSkip];
 };
 
 const getTime = (l: number): string => {

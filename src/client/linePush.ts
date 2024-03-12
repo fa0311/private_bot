@@ -1,17 +1,18 @@
-import axios from 'axios';
-import qs from 'qs';
-import PushClient from '@/client/base';
-import { AxiosResponse } from 'axios';
-import { Result, Success, Failure } from '@/utils/result';
+import PushClient, { PutFileType } from '@/client/base';
+import { Failure, Result, Success } from '@/utils/result';
+import axios, { AxiosResponse } from 'axios';
 import FormData from 'form-data';
+import qs from 'qs';
 
 class LinePushClient extends PushClient {
   url = 'https://notify-api.line.me/api/notify';
   token: string;
+  putFile: PutFileType;
 
-  constructor(token: string) {
+  constructor(token: string, putFile: PutFileType) {
     super();
     this.token = token;
+    this.putFile = putFile;
   }
 
   async send(message?: string, user?: string): Promise<Result<AxiosResponse, Error>> {
@@ -30,24 +31,40 @@ class LinePushClient extends PushClient {
       .catch((e) => new Failure<Error>(e as Error));
   }
 
-  async sendImage(message?: string, image?: Uint8Array, user?: string): Promise<Result<AxiosResponse, Error>> {
-    const params = new FormData();
+  async sendFile(
+    name: string,
+    image: Uint8Array,
+    message?: string,
+    user?: string,
+  ): Promise<Result<AxiosResponse, Error>> {
+    const isImage = (e: string | null) => {
+      if (!e) return false;
+      if (e.split('.').length == 1) return false;
+      return ['jpeg', 'png', 'jpg'].includes(e.split('.').slice(-1)[0]);
+    };
+    const url = await this.putFile(name, image);
     const text = (user || message) && [user && `${user}>>`, message].flatMap((e) => (e ? [e] : [])).join(' ');
-    if (image) params.append('imageFile', image, 'test.png');
-    params.append('message', text ?? '');
 
-    return await axios({
-      method: 'post',
-      url: this.url,
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-        'Content-Type': 'multipart/form-data',
-        ...params.getHeaders(),
-      },
-      data: params,
-    })
-      .then((e) => new Success<AxiosResponse>(e))
-      .catch((e) => new Failure<Error>(e as Error));
+    if (isImage(name)) {
+      const params = new FormData();
+      if (image) params.append('imageFile', image, 'test.png');
+      params.append('message', text ?? '');
+
+      return await axios({
+        method: 'post',
+        url: this.url,
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+          'Content-Type': 'multipart/form-data',
+          ...params.getHeaders(),
+        },
+        data: params,
+      })
+        .then((e) => new Success<AxiosResponse>(e))
+        .catch((e) => new Failure<Error>(e as Error));
+    } else {
+      return this.send([text, url].filter((e) => e).join('\n'));
+    }
   }
 }
 export default LinePushClient;
