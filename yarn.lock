@@ -3357,17 +3357,17 @@ tslib@^2.4.1, tslib@^2.6.1:
   resolved "https://registry.npmjs.org/tslib/-/tslib-2.6.2.tgz"
   integrity sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==
 
-twitter-openapi-typescript-generated@^0.0.15:
-  version "0.0.15"
-  resolved "https://registry.npmjs.org/twitter-openapi-typescript-generated/-/twitter-openapi-typescript-generated-0.0.15.tgz"
-  integrity sha512-JQahkctl4j6mrS+ehKPlVW9lF7tGYKnwxzXkHI6juUpkL7v7wdMnbo+HuUAlyOnYcXXqKPCNnNWeETddCG+2LQ==
+twitter-openapi-typescript-generated@^0.0.19:
+  version "0.0.19"
+  resolved "https://registry.npmjs.org/twitter-openapi-typescript-generated/-/twitter-openapi-typescript-generated-0.0.19.tgz"
+  integrity sha512-4SUQfQzVH1uK8JrxVxu8VFmNCfjiU2iusNGmfd9U/luTWg09q8rxxK2VhlHfUftRu/hQmhczW8NfpsMn+ej4xg==
 
-twitter-openapi-typescript@^0.0.24:
-  version "0.0.24"
-  resolved "https://registry.npmjs.org/twitter-openapi-typescript/-/twitter-openapi-typescript-0.0.24.tgz"
-  integrity sha512-N9fSbJQeXdSUMLXLxboxkrAxH2Ul2/RdxuJqf8syb8WB/YMunKvkeTLfZpmQ3kRWy5Uw6+pfMJWOKOX6hxJzFw==
+twitter-openapi-typescript@^0.0.31:
+  version "0.0.31"
+  resolved "https://registry.npmjs.org/twitter-openapi-typescript/-/twitter-openapi-typescript-0.0.31.tgz"
+  integrity sha512-AoRr6wAV0ASzcxmEQBRnx4VglqaWHExtUnRpKlK3HXLnZVE0/Wjtt5lWD5ztROc1AEaSTNGRMFJ+qZKJ3CziSA==
   dependencies:
-    twitter-openapi-typescript-generated "^0.0.15"
+    twitter-openapi-typescript-generated "^0.0.19"
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"
