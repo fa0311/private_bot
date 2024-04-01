@@ -9,12 +9,15 @@ import { discordVoicePush } from '@/modules/discordVoicePush';
 import { dumpEvent } from '@/modules/dumpEvent';
 import { discordReady, lineReady } from '@/modules/ready';
 import { discordSynchronize, lineSynchronizeFile, lineSynchronizeText } from '@/modules/synchronizeChat';
-import { twitterViewer } from '@/modules/twitter';
+import { twitterSnap, twitterViewer } from '@/modules/twitter';
 import { allWebArchive, webArchive } from '@/modules/webArchive';
 import { HookFn, HookType } from '@/types/modules';
 import * as env from '@/utils/env';
 import { makedirs } from '@/utils/webdav';
 import dayjs from 'dayjs';
+import { TwitterOpenApi } from 'twitter-openapi-typescript';
+
+import { promises as fs } from 'node:fs';
 
 const archivebox = new Archivebox('https://xn--l8jeu7orz.xn--w8j2f.com/add/');
 
@@ -31,6 +34,13 @@ const putFile = async (name: string, contents: Uint8Array): Promise<string> => {
   return `${env.getString('WEBDAV.SHARE_BASE_URL')}${path} `;
 };
 
+
+const putSnap = async (name: string): Promise<string> => {
+  await nextcloud.putFileContents(`LINE/snap/${name}`, await fs.readFile(`temp/${name}`));
+  return `${env.getString('WEBDAV.SHARE_BASE_URL')}LINE/snap/${name}`;
+};
+
+
 const discordPush = new DiscordPushClient(env.getString('DISCORD_PUSH.TOKEN'), putFile);
 const linePush = new LinePushClient(env.getString('LINE_PUSH.TOKEN'), putFile);
 
@@ -39,10 +49,20 @@ const discordPresence = {
   url: env.getString('DISCORD_SET_PRESENCE.ACTIVITIES_URL'),
 };
 
+const twitter = (async () => {
+  const data = await fs.readFile('cookie.json', 'utf8')
+  const twitter = new TwitterOpenApi()
+  const parsed = JSON.parse(data)
+  const api = await twitter.getClientFromCookies(parsed)
+  return api
+})();
+
+
+
 export const hook: HookFn = (event) => {
   const defaultHook: HookType = {
     lineReadyModule: [lineReady],
-    lineTextMessageEventModule: [twitterViewer, webArchive(archivebox), dumpEvent],
+    lineTextMessageEventModule: [twitterViewer(twitter), webArchive(archivebox), dumpEvent],
     lineImageMessageEventModule: [],
     lineVideoMessageEventModule: [],
     lineAudioMessageEventModule: [],
@@ -76,6 +96,7 @@ export const hook: HookFn = (event) => {
 
   if (event == env.getString('SUB_LINE_SYNCHRONIZE_CHAT.CHANNEL_ID')) {
     defaultHook.lineTextMessageEventModule.push(allWebArchive(archivebox));
+    defaultHook.lineTextMessageEventModule.push(twitterSnap(putSnap));
   }
   if (event == env.getString('DISOCRD_SYNCHRONIZE_CHAT.CHANNNEL_ID')) {
     defaultHook.discordMessageCreateModule = [discordSynchronize(linePush)];
