@@ -17,7 +17,7 @@
     "ts-node": "^10.9.1",
     "twitter-openapi-typescript": "^0.0.32",
     "typescript": "*",
-    "webdav": "^4.11.2",
+    "webdav": "^4.11.3",
     "ytdl-core": "^4.11.2"
   },
   "devDependencies": {
