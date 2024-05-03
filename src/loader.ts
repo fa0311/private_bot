@@ -9,7 +9,7 @@ import { discordVoicePush } from '@/modules/discordVoicePush';
 import { dumpEvent } from '@/modules/dumpEvent';
 import { discordReady, lineReady } from '@/modules/ready';
 import { discordSynchronize, lineSynchronizeFile, lineSynchronizeText } from '@/modules/synchronizeChat';
-import { twitterSnap, twitterViewer } from '@/modules/twitter';
+import { twitterViewer } from '@/modules/twitter';
 import { allWebArchive, webArchive } from '@/modules/webArchive';
 import { HookFn, HookType } from '@/types/modules';
 import * as env from '@/utils/env';
@@ -50,10 +50,11 @@ const discordPresence = {
 };
 
 const twitter = (async () => {
-  const data = await fs.readFile('cookie.json', 'utf8')
-  const twitter = new TwitterOpenApi()
-  const parsed = JSON.parse(data)
-  const api = await twitter.getClientFromCookies(parsed)
+  // const data = await fs.readFile('cookie.json', 'utf8')
+  // const twitter = new TwitterOpenApi()
+  // const parsed = JSON.parse(data)
+  // const api = await twitter.getClientFromCookies(parsed)
+  const api = new TwitterOpenApi().getGuestClient()
   return api
 })();
 
@@ -96,7 +97,7 @@ export const hook: HookFn = (event) => {
 
   if (event == env.getString('SUB_LINE_SYNCHRONIZE_CHAT.CHANNEL_ID')) {
     defaultHook.lineTextMessageEventModule.push(allWebArchive(archivebox));
-    defaultHook.lineTextMessageEventModule.push(twitterSnap(putSnap));
+    // defaultHook.lineTextMessageEventModule.push(twitterSnap(putSnap));
   }
   if (event == env.getString('DISOCRD_SYNCHRONIZE_CHAT.CHANNNEL_ID')) {
     defaultHook.discordMessageCreateModule = [discordSynchronize(linePush)];
