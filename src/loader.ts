@@ -115,8 +115,7 @@ export const hook: HookFn = (event) => {
   }
 
   if (event == env.getString('SUB_LINE_SYNCHRONIZE_CHAT.CHANNEL_ID')) {
-    defaultHook.lineTextMessageEventModule.push(allWebArchive(archivebox));
-    defaultHook.lineTextMessageEventModule.push(twitterSnap(putSnap));
+    defaultHook.lineTextMessageEventModule = [allWebArchive(archivebox), twitterSnap(putSnap)];
   }
   if (event == env.getString('DISOCRD_SYNCHRONIZE_CHAT.CHANNNEL_ID')) {
     defaultHook.discordMessageCreateModule = [discordSynchronize(linePush)];
