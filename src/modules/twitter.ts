@@ -30,12 +30,14 @@ export const twitterViewer: Klass<Promise<TwitterOpenApiClient>, LineMessageEven
     const matches = message.text.matchAll(regex);
     const response: string[] = [];
     for (const match of matches) {
-      const data = await (await api).getDefaultApi().getTweetResultByRestId({ tweetId: match[3] });
+      const data = await (await api).getTweetApi().getTweetDetail({ focalTweetId: match[3] });
       if (!data.data) continue;
-      if (!data.data.tweet) continue;
-      if (!data.data.tweet.legacy) continue;
-      response.push(data.data.user.legacy.name);
-      response.push(data.data.tweet.legacy.fullText);
+      if (!data.data.data) continue;
+      if (data.data.data.length == 0) continue;
+      if (!data.data.data[0].tweet) continue;
+      if (!data.data.data[0].tweet.legacy) continue;
+      response.push(data.data.data[0].user.legacy.name);
+      response.push(data.data.data[0].tweet.legacy.fullText);
     }
     if (response.length == 0) return;
     return {
@@ -57,7 +59,7 @@ export const twitterSnap: Klass<twitterSnapParam, LineMessageEventModule<line.Te
     const response: string[] = [];
 
     for (const match of matches) {
-      const cmd = `/usr/local/bin/npx twitter-snap ${match[3]} -o "temp/${match[3]}.{if-photo:png:mp4}" --session-type file --cookies-file cookie.json --simple-log`;
+      const cmd = `/usr/local/bin/npx twitter-snap ${match[3]} -o "temp/${match[3]}.{if-photo:png:mp4}" --session-type file --cookies-file cookie.json --simple-log --api getTweetDetail --limit 1`;
       await exec(cmd);
       const files = (await fs.readdir('temp')).filter((file) => file.includes(match[3]));
 

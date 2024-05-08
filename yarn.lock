@@ -3357,17 +3357,17 @@ tslib@^2.4.1, tslib@^2.6.1:
   resolved "https://registry.npmjs.org/tslib/-/tslib-2.6.2.tgz"
   integrity sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==
 
-twitter-openapi-typescript-generated@^0.0.20:
-  version "0.0.20"
-  resolved "https://registry.npmjs.org/twitter-openapi-typescript-generated/-/twitter-openapi-typescript-generated-0.0.20.tgz"
-  integrity sha512-pDiYV4DNSFzRxhha06t/KWn7iGAzdHxdlfdkdi+Fb5QVubXF5IHAGeXVXrFdd1ie7CY8nihNJDQjxXYoBEnb6Q==
+twitter-openapi-typescript-generated@^0.0.21:
+  version "0.0.21"
+  resolved "https://registry.npmjs.org/twitter-openapi-typescript-generated/-/twitter-openapi-typescript-generated-0.0.21.tgz"
+  integrity sha512-HgzZHaAnRsTYQXpaWAtdeiiMWJ26jCLTQ46ylBP53TTCGcktPsBxSx9zJmavSJEd/Sn1t8xXAIGnZJY0jzIK9g==
 
-twitter-openapi-typescript@^0.0.32:
-  version "0.0.32"
-  resolved "https://registry.npmjs.org/twitter-openapi-typescript/-/twitter-openapi-typescript-0.0.32.tgz"
-  integrity sha512-cbXH7YocoAmX54yxSAUnBYWh5iOHH1h76i57ZOfifU7YxTlmBozKGaKOx/P4ff340WP+7ImYYkxpuGWFfe8ndA==
+twitter-openapi-typescript@^0.0.33:
+  version "0.0.33"
+  resolved "https://registry.npmjs.org/twitter-openapi-typescript/-/twitter-openapi-typescript-0.0.33.tgz"
+  integrity sha512-+mYQnMKhFz/xMrW0OJosR3M5M0AIoTawMQyDc5W7eSg92E6uhCQg+IjbWjCkHIj0akh24utdPfYWt9rQQ1Rg4w==
   dependencies:
-    twitter-openapi-typescript-generated "^0.0.20"
+    twitter-openapi-typescript-generated "^0.0.21"
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"
@@ -3535,7 +3535,7 @@ vary@~1.1.2:
 
 webdav@^4.11.3:
   version "4.11.3"
-  resolved "https://registry.yarnpkg.com/webdav/-/webdav-4.11.3.tgz#c8bf9b5ed1799d432d58958433925b0fa91db08e"
+  resolved "https://registry.npmjs.org/webdav/-/webdav-4.11.3.tgz"
   integrity sha512-NIuREBXYo5xb+zB4zy502snynbhugWjepg5Oke0ByEb7J/Ofmbk+JgFYM+sZdnKG3+XQ87rictDIF+SHUJkwlg==
   dependencies:
     axios "^0.27.2"
