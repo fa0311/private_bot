@@ -34,10 +34,15 @@ export const twitterViewer: Klass<Promise<TwitterOpenApiClient>, LineMessageEven
       if (!data.data) continue;
       if (!data.data.data) continue;
       if (data.data.data.length == 0) continue;
-      if (!data.data.data[0].tweet) continue;
-      if (!data.data.data[0].tweet.legacy) continue;
-      response.push(data.data.data[0].user.legacy.name);
-      response.push(data.data.data[0].tweet.legacy.fullText);
+      const index = data.data.data.findIndex((e) => e.tweet.restId == match[3]);
+      Array.from({ length: index + 1 }, (_, i) => i).forEach((i) => {
+        const tweet = data.data.data[i];
+        if (!tweet.tweet.legacy) return;
+        response.push(tweet.user.legacy.name);
+        response.push(tweet.tweet.legacy.fullText);
+        response.push("----------");
+      });
+      response.pop();
     }
     if (response.length == 0) return;
     return {
