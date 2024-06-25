@@ -64,7 +64,7 @@ export const twitterSnap: Klass<twitterSnapParam, LineMessageEventModule<line.Te
     const response: string[] = [];
 
     for (const match of matches) {
-      const cmd = `/usr/local/bin/npx twitter-snap ${match[3]} -o "temp/${match[3]}.{if-photo:png:mp4}" --session-type file --cookies-file cookie.json --simple-log --api getTweetDetail --limit 1`;
+      const cmd = `/usr/local/bin/npx twitter-snap ${match[3]} -o "temp/${match[3]}.{if-photo:png:mp4}" --session-type file --cookies-file cookie.json --simple-log --api getTweetDetail --limit 1 --width 1440 --scale 2`;
       await exec(cmd);
       const files = (await fs.readdir('temp')).filter((file) => file.includes(match[3]));
 
