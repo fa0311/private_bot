@@ -31,6 +31,8 @@ const archivebox = new Archivebox('https://xn--l8jeu7orz.xn--w8j2f.com/add/');
 const nextcloud = webdav.createClient(env.getString('WEBDAV.URL'), {
   username: env.getString('WEBDAV.USERNAME'),
   password: env.getString('WEBDAV.PASSWORD'),
+  maxBodyLength: Infinity,
+  maxContentLength: Infinity,
 });
 
 
