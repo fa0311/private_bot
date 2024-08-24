@@ -53,8 +53,8 @@ const putFile = async (name: string, contents: Uint8Array): Promise<string> => {
 };
 
 
-const putSnap = async (name: string): Promise<string> => {
-  await putFileContents(`LINE/snap/${name}`, await fs.readFile(`temp/${name}`));
+const putSnap = async (id: string, name: string): Promise<string> => {
+  await putFileContents(`LINE/snap/${id}/${name}`, await fs.readFile(`temp/${name}`));
   return `${env.getString('WEBDAV.SHARE_BASE_URL')}LINE/snap/${name}`;
 };
 

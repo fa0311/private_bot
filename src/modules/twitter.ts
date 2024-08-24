@@ -53,7 +53,7 @@ export const twitterViewer: Klass<Promise<TwitterOpenApiClient>, LineMessageEven
 });
 
 
-type twitterSnapParam = (name: string) => Promise<string>;
+type twitterSnapParam = (id: string, name: string) => Promise<string>;
 export const twitterSnap: Klass<twitterSnapParam, LineMessageEventModule<line.TextEventMessage>> = (put) => ({
   name: 'TwitterSnap',
   listener: async (client, event, message) => {
@@ -69,7 +69,8 @@ export const twitterSnap: Klass<twitterSnapParam, LineMessageEventModule<line.Te
       const files = (await fs.readdir('temp')).filter((file) => file.includes(match[3]));
 
       for (const file of files) {
-        const name = await put(file);
+        const id = event.source.userId ?? 'unknown';
+        const name = await put(id, file);
         await fs.unlink(`temp/${file}`);
         response.push(name);
       }
