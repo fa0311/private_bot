@@ -54,8 +54,9 @@ const putFile = async (name: string, contents: Uint8Array): Promise<string> => {
 
 
 const putSnap = async (id: string, name: string): Promise<string> => {
+  await makedirs(nextcloud, `LINE/snap/${id}`);
   await putFileContents(`LINE/snap/${id}/${name}`, await fs.readFile(`temp/${name}`));
-  return `${env.getString('WEBDAV.SHARE_BASE_URL')}LINE/snap/${name}`;
+  return `${env.getString('WEBDAV.SHARE_BASE_URL')}LINE/snap/${id}/${name}`;
 };
 
 
@@ -117,7 +118,7 @@ export const hook: HookFn = (event) => {
   }
 
   if (event == env.getString('SUB_LINE_SYNCHRONIZE_CHAT.CHANNEL_ID')) {
-    defaultHook.lineTextMessageEventModule = [allWebArchive(archivebox), twitterSnap(putSnap)];
+    defaultHook.lineTextMessageEventModule = [allWebArchive(archivebox), twitterSnap(putSnap), dumpEvent];
   }
   if (event == env.getString('DISOCRD_SYNCHRONIZE_CHAT.CHANNNEL_ID')) {
     defaultHook.discordMessageCreateModule = [discordSynchronize(linePush)];
