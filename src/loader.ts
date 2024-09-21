@@ -73,7 +73,7 @@ const twitter = (async () => {
   const data = await fs.readFile('cookie.json', 'utf-8');
   const parsed = JSON.parse(data)
   const cookies = parsed as Cookie[]
-  const json = Object.fromEntries(cookies.filter((e) => e.domain === '.twitter.com').map((e) => [e.name, e.value]));
+  const json = Object.fromEntries(cookies.filter((e) => e.domain === '.x.com').map((e) => [e.name, e.value]));
   const client = await api.getClientFromCookies(json);
 
   // const client = new TwitterOpenApi().getGuestClient()
