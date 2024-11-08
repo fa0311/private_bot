@@ -47,7 +47,7 @@ export const discordMusic: Klass<undefined, DiscordMessageModule<discord.Message
         const connection = voice.joinVoiceChannel({
           channelId: message.member?.voice.channelId,
           guildId: message.guildId,
-          adapterCreator: message.guild.voiceAdapterCreator,
+          adapterCreator: message.guild.voiceAdapterCreator as any,
         });
         const queue = new MusicQueue(message.guildId, connection, client.logger);
         queue.start(voice.createAudioResource(yt));
