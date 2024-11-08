@@ -4,6 +4,7 @@ import { spawn } from 'child_process';
 import 'dayjs/locale/ja';
 import { promises as fs } from 'fs';
 import { TwitterOpenApiClient } from 'twitter-openapi-typescript';
+import { Tweet } from 'twitter-openapi-typescript-generated';
 
 const exec = (cmd: string): Promise<void> => new Promise((resolve, reject) => {
   try {
@@ -22,6 +23,31 @@ const exec = (cmd: string): Promise<void> => new Promise((resolve, reject) => {
 });
 
 
+
+const tweetReplace = (tweet: string): string => {
+  return tweet.replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'");
+}
+
+const tweetNormalize = (tweet: Tweet): string => {
+  if (tweet.noteTweet?.noteTweetResults.result.text) {
+    return tweetReplace(tweet.noteTweet.noteTweetResults.result.text);
+  }
+  if (tweet.legacy?.fullText) {
+    if ((tweet.legacy.entities.media ?? []).length > 0) {
+      return tweetReplace(tweet.legacy.fullText.replace(/https:\/\/t\.co\/[a-zA-Z0-9]{10}$/, ''));
+    } else {
+      return tweetReplace(tweet.legacy.fullText);
+    }
+  } else {
+    return "";
+  }
+}
+
+
 export const twitterViewer: Klass<Promise<TwitterOpenApiClient>, LineMessageEventModule<line.TextEventMessage>> = (api) => ({
   name: 'TwitterViewer',
   listener: async (client, event, message) => {
@@ -31,18 +57,23 @@ export const twitterViewer: Klass<Promise<TwitterOpenApiClient>, LineMessageEven
     const response: string[] = [];
     for (const match of matches) {
       const data = await (await api).getTweetApi().getTweetDetail({ focalTweetId: match[3] });
-      if (!data.data) continue;
-      if (!data.data.data) continue;
-      if (data.data.data.length == 0) continue;
-      const index = data.data.data.findIndex((e) => e.tweet.restId == match[3]);
-      Array.from({ length: index + 1 }, (_, i) => i).forEach((i) => {
-        const tweet = data.data.data[i];
-        if (!tweet.tweet.legacy) return;
+      if (data.data.data.length > 0) {
+        const index = data.data.data.findIndex((e) => e.tweet.restId == match[3]);
+        for (let i = 0; i < index; i++) {
+          const tweet = data.data.data[i];
+          response.push(tweet.user.legacy.name);
+          response.push(tweetNormalize(tweet.tweet));
+          response.push("----------");
+        }
+        const tweet = data.data.data[index];
+        if (tweet.quoted) {
+          response.push(tweet.quoted.user.legacy.name);
+          response.push(tweetNormalize(tweet.quoted.tweet));
+          response.push("----------");
+        }
         response.push(tweet.user.legacy.name);
-        response.push(tweet.tweet.legacy.fullText);
-        response.push("----------");
-      });
-      response.pop();
+        response.push(tweetNormalize(tweet.tweet));
+      }
     }
     if (response.length == 0) return;
     return {
