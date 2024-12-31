@@ -114,7 +114,7 @@ export const twitterSnap: Klass<twitterSnapParam, LineMessageEventModule<line.Te
       const matches = message.text.matchAll(regex);
 
       for (const [url, _, id] of matches) {
-        const cmd = `/usr/local/bin/npx twitter-snap ${url} -o "temp/pixiv/${id}.png" --session-type file --cookies-file cookie.json --simple-log --limit 1 --width 1440 --scale 2`;
+        const cmd = `/usr/local/bin/npx twitter-snap ${url} -o "temp/pixiv/${id}.{if-type:png:mp4:json:}" --session-type file --cookies-file cookie.json --simple-log --limit 1 --width 1440 --scale 2`;
         await exec(cmd);
         const files = (await fs.readdir('temp/pixiv')).filter((file) => file.includes(id));
 
