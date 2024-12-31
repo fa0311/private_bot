@@ -56,7 +56,7 @@ const putFile = async (name: string, contents: Uint8Array): Promise<string> => {
 const putSnap = async (id: string, dir:string, name: string): Promise<string> => {
   await makedirs(nextcloud, `LINE/snap/${id}`);
   await putFileContents(`LINE/snap/${id}/${name}`, await fs.readFile(`${dir}/${name}`))
-  return `${env.getString('WEBDAV.SHARE_BASE_URL')}LINE/snap/${id}/${name}`;
+  return `${env.getString('WEBDAV.SHARE_BASE_URL')}LINE/snap/${id}/${dir}/${name}`;
 };
 
 
