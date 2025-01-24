@@ -6,7 +6,7 @@
   "description": "",
   "dependencies": {
     "@discordjs/voice": "^0.17.0",
-    "@line/bot-sdk": "^9.4.4",
+    "@line/bot-sdk": "^9.5.3",
     "cheerio": "^1.0.0",
     "dayjs": "^1.11.13",
     "discord.js": "^14.16.3",

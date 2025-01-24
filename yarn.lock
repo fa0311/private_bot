@@ -189,10 +189,10 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@line/bot-sdk@^9.4.4":
-  version "9.4.4"
-  resolved "https://registry.yarnpkg.com/@line/bot-sdk/-/bot-sdk-9.4.4.tgz#b29ae386d4352e82908ed16b3bfe28a96fddbd59"
-  integrity sha512-iTiuK/ocTPOsk5+EGge3KIW3OVRNYPeBtCCp0WdsTuqty2v+9ObtKiReU35cUvf24AQjwFSccqs8D3x+HvYegQ==
+"@line/bot-sdk@^9.5.3":
+  version "9.5.3"
+  resolved "https://registry.yarnpkg.com/@line/bot-sdk/-/bot-sdk-9.5.3.tgz#55c8e8799e40687f6a371b581537f2c7f1cc1385"
+  integrity sha512-NeBTkpokVesoRCTzM4Elzj21msHc/kXnJPKudZXo5oS0ED+b+/B/rOAq30DC4yEBb3ExD3jeqHohrdeIUOweyQ==
   dependencies:
     "@types/node" "^22.0.0"
   optionalDependencies:

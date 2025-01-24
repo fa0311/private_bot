@@ -7,11 +7,24 @@ import type * as line from '@line/bot-sdk';
 import 'dayjs/locale/ja';
 import type * as discord from 'discord.js';
 
+const mesageCache = new Map<string, [line.MessageEvent, line.TextEventMessage]>();
+
 export const lineSynchronizeText: Klass<PushClient, LineMessageEventModule<line.TextEventMessage>> = (push) => ({
   name: 'LineSynchronizeText',
   listener: async (client, event, message) => {
+    mesageCache.set(message.id, [event, message]);
     const profile = (await getLineProfile(client.line, event.source)).get();
-    (await push.send(message.text, profile.displayName, profile.pictureUrl)).get();
+    if (message.quotedMessageId && mesageCache.has(message.quotedMessageId)) {
+      const [quotedClient, quotedMessage] = mesageCache.get(message.quotedMessageId)!;
+      const quotedprofile = (await getLineProfile(client.line, quotedClient.source)).get();
+      const text = `${quotedprofile.displayName}: ${quotedMessage.text} >> ${message.text}`;
+      (await push.send(text, profile.displayName, profile.pictureUrl)).get();
+    } else if (message.quotedMessageId) {
+      const text = `不明なメッセージ >> ${message.text}`;
+      (await push.send(text, profile.displayName, profile.pictureUrl)).get();
+    } else {
+      (await push.send(message.text, profile.displayName, profile.pictureUrl)).get();
+    }
   },
 });
 
@@ -50,7 +63,7 @@ export const lineSynchronizeSticker: Klass<PushClient, LineMessageEventModule<li
     await push.sendFile(
       `${message.stickerId}.png`,
       buffer,
-      message.keywords.join(','),
+      message.keywords?.join(','),
       profile.displayName,
       profile.pictureUrl,
     );
