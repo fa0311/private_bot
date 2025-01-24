@@ -40,6 +40,23 @@ export const lineSynchronizeFile: Klass<PushClient, LineMessageEventModule<Conte
   },
 });
 
+export const lineSynchronizeSticker: Klass<PushClient, LineMessageEventModule<line.StickerEventMessage>> = (push) => ({
+  name: 'LineSynchronizeSticker',
+  listener: async (client, event, message) => {
+    const url = `https://stickershop.line-scdn.net/stickershop/v1/sticker/${message.stickerId}/android/sticker.png`;
+    const results = await download(url);
+    const buffer = results.get();
+    const profile = (await getLineProfile(client.line, event.source)).get();
+    await push.sendFile(
+      `${message.stickerId}.png`,
+      buffer,
+      message.keywords.join(','),
+      profile.displayName,
+      profile.pictureUrl,
+    );
+  },
+});
+
 export const discordSynchronize: Klass<PushClient, DiscordMessageModule<discord.Message>> = (push) => ({
   name: 'DiscordSynchronize',
   listener: async (client, message) => {

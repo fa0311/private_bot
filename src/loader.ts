@@ -8,7 +8,12 @@ import { serPresence } from '@/modules/discordSetPresence';
 import { discordVoicePush } from '@/modules/discordVoicePush';
 import { dumpEvent } from '@/modules/dumpEvent';
 import { discordReady, lineReady } from '@/modules/ready';
-import { discordSynchronize, lineSynchronizeFile, lineSynchronizeText } from '@/modules/synchronizeChat';
+import {
+  discordSynchronize,
+  lineSynchronizeFile,
+  lineSynchronizeSticker,
+  lineSynchronizeText,
+} from '@/modules/synchronizeChat';
 import { twitterSnap, twitterViewer } from '@/modules/twitter';
 import { allWebArchive, webArchive } from '@/modules/webArchive';
 import type { HookFn, HookType } from '@/types/modules';
@@ -85,7 +90,7 @@ export const hook: HookFn = (event) => {
     lineAudioMessageEventModule: [],
     lineLocationMessageEventModule: [],
     lineFileMessageEventModule: [],
-    lineStickerMessageEventModule: [],
+    lineStickerMessageEventModule: [lineSynchronizeSticker(discordPush)],
     lineUnsendMessageEventModule: [],
     lineFollowMessageEventModule: [],
     lineUnfollowMessageEventModule: [],
