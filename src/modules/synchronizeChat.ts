@@ -17,10 +17,11 @@ export const lineSynchronizeText: Klass<PushClient, LineMessageEventModule<line.
     if (message.quotedMessageId && mesageCache.has(message.quotedMessageId)) {
       const [quotedClient, quotedMessage] = mesageCache.get(message.quotedMessageId)!;
       const quotedprofile = (await getLineProfile(client.line, quotedClient.source)).get();
-      const text = `${quotedprofile.displayName}: ${quotedMessage.text} >> ${message.text}`;
+      const escape = (text: string) => text.split('\n').join('\n> ');
+      const text = `> ${quotedprofile.displayName}: ${escape(quotedMessage.text)}\n${message.text}`;
       (await push.send(text, profile.displayName, profile.pictureUrl)).get();
     } else if (message.quotedMessageId) {
-      const text = `不明なメッセージ >> ${message.text}`;
+      const text = `> 不明なメッセージ\n${message.text}`;
       (await push.send(text, profile.displayName, profile.pictureUrl)).get();
     } else {
       (await push.send(message.text, profile.displayName, profile.pictureUrl)).get();
