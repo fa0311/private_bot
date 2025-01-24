@@ -1,7 +1,7 @@
+import { Failure, type Result, Success } from '@/utils/result';
+import type { AxiosResponse } from 'axios';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { AxiosResponse } from 'axios';
-import { Result, Success, Failure } from '@/utils/result';
 import FormData from 'form-data';
 
 class Archivebox {

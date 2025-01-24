@@ -1,4 +1,4 @@
-import { ListenExpressModule, DiscordClientReadyModule } from '@/types/modules';
+import type { DiscordClientReadyModule, ListenExpressModule } from '@/types/modules';
 
 export const lineReady: ListenExpressModule = {
   name: 'lineReady',

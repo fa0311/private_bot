@@ -1,4 +1,4 @@
-import { DiscordClientReadyModule, Klass } from '@/types/modules';
+import type { DiscordClientReadyModule, Klass } from '@/types/modules';
 
 export const serPresence: Klass<{ name: string; url: string }, DiscordClientReadyModule> = ({ name, url }) => ({
   name: 'discordSetPresence',

@@ -1,6 +1,6 @@
 import Bot from '@/bot';
 import { hook } from '@/loader';
-import { BotConfig } from '@/types/bot';
+import type { BotConfig } from '@/types/bot';
 import * as env from '@/utils/env';
 import { GatewayIntentBits } from 'discord.js';
 

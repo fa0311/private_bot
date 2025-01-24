@@ -11,14 +11,13 @@ import { discordReady, lineReady } from '@/modules/ready';
 import { discordSynchronize, lineSynchronizeFile, lineSynchronizeText } from '@/modules/synchronizeChat';
 import { twitterSnap, twitterViewer } from '@/modules/twitter';
 import { allWebArchive, webArchive } from '@/modules/webArchive';
-import { HookFn, HookType } from '@/types/modules';
+import type { HookFn, HookType } from '@/types/modules';
 import * as env from '@/utils/env';
 import { makedirs } from '@/utils/webdav';
 import dayjs from 'dayjs';
 import { TwitterOpenApi } from 'twitter-openapi-typescript';
 
 import { promises as fs } from 'node:fs';
-
 
 export type Cookie = {
   name: string;
@@ -31,10 +30,9 @@ const archivebox = new Archivebox('https://xn--l8jeu7orz.xn--w8j2f.com/add/');
 const nextcloud = webdav.createClient(env.getString('WEBDAV.URL'), {
   username: env.getString('WEBDAV.USERNAME'),
   password: env.getString('WEBDAV.PASSWORD'),
-  maxBodyLength: Infinity,
-  maxContentLength: Infinity,
+  maxBodyLength: Number.POSITIVE_INFINITY,
+  maxContentLength: Number.POSITIVE_INFINITY,
 });
-
 
 const putFileContents = async (path: string, contents: Uint8Array): Promise<void> => {
   try {
@@ -42,7 +40,7 @@ const putFileContents = async (path: string, contents: Uint8Array): Promise<void
   } catch (e) {
     console.error(e);
   }
-}
+};
 
 const putFile = async (name: string, contents: Uint8Array): Promise<string> => {
   const time = dayjs(new Date()).locale('ja').format('YYYY-MM');
@@ -52,13 +50,11 @@ const putFile = async (name: string, contents: Uint8Array): Promise<string> => {
   return `${env.getString('WEBDAV.SHARE_BASE_URL')}${path} `;
 };
 
-
-const putSnap = async (id: string, dir:string, name: string): Promise<string> => {
+const putSnap = async (id: string, dir: string, name: string): Promise<string> => {
   await makedirs(nextcloud, `LINE/snap/${id}`);
-  await putFileContents(`LINE/snap/${id}/${name}`, await fs.readFile(`${dir}/${name}`))
+  await putFileContents(`LINE/snap/${id}/${name}`, await fs.readFile(`${dir}/${name}`));
   return `${env.getString('WEBDAV.SHARE_BASE_URL')}LINE/snap/${id}/${name}`;
 };
-
 
 const discordPush = new DiscordPushClient(env.getString('DISCORD_PUSH.TOKEN'), putFile);
 const linePush = new LinePushClient(env.getString('LINE_PUSH.TOKEN'), putFile);
@@ -71,16 +67,14 @@ const discordPresence = {
 const twitter = (async () => {
   const api = new TwitterOpenApi();
   const data = await fs.readFile('cookie.json', 'utf-8');
-  const parsed = JSON.parse(data)
-  const cookies = parsed as Cookie[]
+  const parsed = JSON.parse(data);
+  const cookies = parsed as Cookie[];
   const json = Object.fromEntries(cookies.filter((e) => e.domain === '.x.com').map((e) => [e.name, e.value]));
   const client = await api.getClientFromCookies(json);
 
   // const client = new TwitterOpenApi().getGuestClient()
-  return client
+  return client;
 })();
-
-
 
 export const hook: HookFn = (event) => {
   const defaultHook: HookType = {

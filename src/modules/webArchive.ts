@@ -1,6 +1,6 @@
-import { Klass, LineMessageEventModule } from '@/types/modules';
-import Archivebox from '@/utils/archivebox';
-import * as line from '@line/bot-sdk';
+import type { Klass, LineMessageEventModule } from '@/types/modules';
+import type Archivebox from '@/utils/archivebox';
+import type * as line from '@line/bot-sdk';
 import 'dayjs/locale/ja';
 
 export const webArchive: Klass<Archivebox, LineMessageEventModule<line.TextEventMessage>> = (archivebox) => ({

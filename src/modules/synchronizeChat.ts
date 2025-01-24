@@ -1,11 +1,11 @@
-import PushClient from '@/client/base';
-import { DiscordMessageModule, Klass, LineMessageEventModule } from '@/types/modules';
+import type PushClient from '@/client/base';
+import type { DiscordMessageModule, Klass, LineMessageEventModule } from '@/types/modules';
 import download from '@/utils/download';
 import { getLineProfile } from '@/utils/line';
 import { streamToBuffer } from '@/utils/webdav';
-import * as line from '@line/bot-sdk';
+import type * as line from '@line/bot-sdk';
 import 'dayjs/locale/ja';
-import * as discord from 'discord.js';
+import type * as discord from 'discord.js';
 
 export const lineSynchronizeText: Klass<PushClient, LineMessageEventModule<line.TextEventMessage>> = (push) => ({
   name: 'LineSynchronizeText',

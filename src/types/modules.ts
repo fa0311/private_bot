@@ -1,6 +1,6 @@
-import { BotClient } from '@/types/bot';
-import * as line from '@line/bot-sdk';
-import * as discord from 'discord.js';
+import type { BotClient } from '@/types/bot';
+import type * as line from '@line/bot-sdk';
+import type * as discord from 'discord.js';
 
 type LineThings = line.DeviceLinkEvent | line.DeviceUnlinkEvent | line.LINEThingsScenarioExecutionEvent;
 

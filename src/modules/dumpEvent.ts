@@ -1,5 +1,5 @@
-import * as line from '@line/bot-sdk';
-import { LineMessageEventModule } from '@/types/modules';
+import type { LineMessageEventModule } from '@/types/modules';
+import type * as line from '@line/bot-sdk';
 import 'dayjs/locale/ja';
 
 export const dumpEvent: LineMessageEventModule<line.TextEventMessage> = {

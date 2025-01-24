@@ -1,5 +1,5 @@
-import { BotClient, BotConfig } from '@/types/bot';
-import { HookFn } from '@/types/modules';
+import type { BotClient, BotConfig } from '@/types/bot';
+import type { HookFn } from '@/types/modules';
 import * as line from '@line/bot-sdk';
 import * as discord from 'discord.js';
 import express from 'express';

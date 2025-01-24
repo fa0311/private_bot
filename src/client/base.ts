@@ -1,5 +1,5 @@
-import { Result } from '@/utils/result';
-import { AxiosResponse } from 'axios';
+import type { Result } from '@/utils/result';
+import type { AxiosResponse } from 'axios';
 
 export type PutFileType = (name: string, contents: Uint8Array) => Promise<string>;
 

@@ -1,5 +1,5 @@
 import MusicQueue from '@/client/music';
-import { DiscordMessageModule, Klass } from '@/types/modules';
+import type { DiscordMessageModule, Klass } from '@/types/modules';
 import { youtube } from '@/utils/youtube';
 import * as voice from '@discordjs/voice';
 import 'dayjs/locale/ja';

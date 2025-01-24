@@ -1,5 +1,5 @@
-import { Result, Success, Failure } from '@/utils/result';
-import * as line from '@line/bot-sdk';
+import { Failure, type Result, Success } from '@/utils/result';
+import type * as line from '@line/bot-sdk';
 
 export const getLineProfile = async (
   client: line.Client,

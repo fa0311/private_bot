@@ -1,6 +1,6 @@
 import * as voice from '@discordjs/voice';
-import { Logger } from 'log4js';
-import ytdl from 'ytdl-core';
+import type { Logger } from 'log4js';
+import type ytdl from 'ytdl-core';
 
 class MusicQueue {
   connection: voice.VoiceConnection;

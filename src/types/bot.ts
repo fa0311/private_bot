@@ -1,6 +1,6 @@
-import * as line from '@line/bot-sdk';
-import * as discord from 'discord.js';
-import * as log4js from 'log4js';
+import type * as line from '@line/bot-sdk';
+import type * as discord from 'discord.js';
+import type * as log4js from 'log4js';
 
 export type BotConfig = {
   line: {

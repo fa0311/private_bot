@@ -1,5 +1,5 @@
-import * as webdav from 'webdav';
-import { Readable } from 'stream';
+import type { Readable } from 'stream';
+import type * as webdav from 'webdav';
 
 export const makedirs = async (client: webdav.WebDAVClient, dir: string) => {
   if (!(await client.exists(dir))) {

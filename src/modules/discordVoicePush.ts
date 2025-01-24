@@ -1,6 +1,6 @@
-import PushClient from '@/client/base';
-import { DiscordStateModule, Klass } from '@/types/modules';
-import * as discord from 'discord.js';
+import type PushClient from '@/client/base';
+import type { DiscordStateModule, Klass } from '@/types/modules';
+import type * as discord from 'discord.js';
 
 export const discordVoicePush: Klass<PushClient, DiscordStateModule<discord.VoiceState>> = (push) => ({
   name: 'discordVoicePush',

@@ -1,6 +1,6 @@
-import PushClient, { PutFileType } from '@/client/base';
-import { Failure, Result, Success } from '@/utils/result';
-import axios, { AxiosResponse } from 'axios';
+import PushClient, { type PutFileType } from '@/client/base';
+import { Failure, type Result, Success } from '@/utils/result';
+import axios, { type AxiosResponse } from 'axios';
 
 class DiscordPushClient extends PushClient {
   url = 'https://discordapp.com/api/webhooks/';
