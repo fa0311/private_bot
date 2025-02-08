@@ -28,6 +28,7 @@ export type HookType = {
   discordReadyModule: DiscordClientReadyModule[];
   discordMessageCreateModule: DiscordMessageModule<discord.Message>[];
   discordVoiceStateUpdate: DiscordStateModule<discord.VoiceState>[];
+  errorHook: (error: string) => void;
 };
 
 export type HookFn = (event?: string) => HookType;

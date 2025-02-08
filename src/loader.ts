@@ -7,7 +7,7 @@ import LinePushClient from '@/client/linePush';
 import { serPresence } from '@/modules/discordSetPresence';
 import { discordVoicePush } from '@/modules/discordVoicePush';
 import { dumpEvent } from '@/modules/dumpEvent';
-import { discordReady, lineReady } from '@/modules/ready';
+import { discordReady, lineReady, lineReadyToLine } from '@/modules/ready';
 import {
   discordSynchronize,
   lineSynchronizeFile,
@@ -63,6 +63,7 @@ const putSnap = async (id: string, dir: string, name: string): Promise<string> =
 
 const discordPush = new DiscordPushClient(env.getString('DISCORD_PUSH.TOKEN'), putFile);
 const linePush = new LinePushClient(env.getString('LINE_PUSH.TOKEN'), putFile);
+const subLinePush = new LinePushClient(env.getString('SUB_LINE_PUSH.TOKEN'), putFile);
 
 const discordPresence = {
   name: env.getString('DISCORD_SET_PRESENCE.ACTIVITIES_NAME'),
@@ -83,7 +84,7 @@ const twitter = (async () => {
 
 export const hook: HookFn = (event) => {
   const defaultHook: HookType = {
-    lineReadyModule: [lineReady],
+    lineReadyModule: [lineReady, lineReadyToLine(subLinePush)],
     lineTextMessageEventModule: [twitterViewer(twitter), webArchive(archivebox), dumpEvent],
     lineImageMessageEventModule: [],
     lineVideoMessageEventModule: [],
@@ -106,6 +107,7 @@ export const hook: HookFn = (event) => {
     discordReadyModule: [discordReady, serPresence(discordPresence)],
     discordMessageCreateModule: [],
     discordVoiceStateUpdate: [],
+    errorHook: (error) => linePush.send(error),
   };
 
   if (event == env.getString('LINE_SYNCHRONIZE_CHAT.CHANNEL_ID')) {
@@ -118,6 +120,7 @@ export const hook: HookFn = (event) => {
 
   if (event == env.getString('SUB_LINE_SYNCHRONIZE_CHAT.CHANNEL_ID')) {
     defaultHook.lineTextMessageEventModule = [allWebArchive(archivebox), twitterSnap(putSnap), dumpEvent];
+    defaultHook.errorHook = (error) => linePush.send(error);
   }
   if (event == env.getString('DISOCRD_SYNCHRONIZE_CHAT.CHANNNEL_ID')) {
     defaultHook.discordMessageCreateModule = [discordSynchronize(linePush)];

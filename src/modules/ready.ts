@@ -1,4 +1,5 @@
-import type { DiscordClientReadyModule, ListenExpressModule } from '@/types/modules';
+import type PushClient from '@/client/base';
+import type { DiscordClientReadyModule, Klass, ListenExpressModule } from '@/types/modules';
 
 export const lineReady: ListenExpressModule = {
   name: 'lineReady',
@@ -13,3 +14,10 @@ export const discordReady: DiscordClientReadyModule = {
     client.logger.info('discord ready');
   },
 };
+
+export const lineReadyToLine: Klass<PushClient, ListenExpressModule> = (push) => ({
+  name: 'lineReadyToLine',
+  listener: async (client, port) => {
+    push.send('ready');
+  },
+});
