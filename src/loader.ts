@@ -47,12 +47,18 @@ const putFileContents = async (path: string, contents: Uint8Array): Promise<void
   }
 };
 
-const putFile = async (name: string, contents: Uint8Array): Promise<string> => {
+const putFileDate = async (name: string, contents: Uint8Array): Promise<string> => {
   const time = dayjs(new Date()).locale('ja').format('YYYY-MM');
-  const path = `LINE/${time}/${name}`;
-  await makedirs(nextcloud, `LINE/${time}`);
-  await putFileContents(path, contents).catch((e) => console.error(e));
-  return `${env.getString('WEBDAV.SHARE_BASE_URL')}${path} `;
+  return putFile(time)(name, contents);
+};
+
+const putFile = (file: string) => {
+  return async (name: string, contents: Uint8Array): Promise<string> => {
+    const path = `LINE/${file}/${name}`;
+    await makedirs(nextcloud, `LINE/${file}`);
+    await putFileContents(path, contents).catch((e) => console.error(e));
+    return `${env.getString('WEBDAV.SHARE_BASE_URL')}${path}`;
+  };
 };
 
 const putSnap = async (id: string, dir: string, name: string): Promise<string> => {
@@ -61,9 +67,10 @@ const putSnap = async (id: string, dir: string, name: string): Promise<string> =
   return `${env.getString('WEBDAV.SHARE_BASE_URL')}LINE/snap/${id}/${name}`;
 };
 
-const discordPush = new DiscordPushClient(env.getString('DISCORD_PUSH.TOKEN'), putFile);
-const linePush = new LinePushClient(env.getString('LINE_PUSH.TOKEN'), putFile);
-const subLinePush = new LinePushClient(env.getString('SUB_LINE_PUSH.TOKEN'), putFile);
+const stickerPush = new DiscordPushClient(env.getString('DISCORD_PUSH.TOKEN'), putFile('sticker'));
+const discordPush = new DiscordPushClient(env.getString('DISCORD_PUSH.TOKEN'), putFileDate);
+const linePush = new LinePushClient(env.getString('LINE_PUSH.TOKEN'), putFileDate);
+const subLinePush = new LinePushClient(env.getString('SUB_LINE_PUSH.TOKEN'), putFileDate);
 
 const discordPresence = {
   name: env.getString('DISCORD_SET_PRESENCE.ACTIVITIES_NAME'),
@@ -91,7 +98,7 @@ export const hook: HookFn = (event) => {
     lineAudioMessageEventModule: [],
     lineLocationMessageEventModule: [],
     lineFileMessageEventModule: [],
-    lineStickerMessageEventModule: [lineSynchronizeSticker(discordPush)],
+    lineStickerMessageEventModule: [lineSynchronizeSticker(stickerPush)],
     lineUnsendMessageEventModule: [],
     lineFollowMessageEventModule: [],
     lineUnfollowMessageEventModule: [],

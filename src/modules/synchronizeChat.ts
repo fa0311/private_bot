@@ -7,19 +7,17 @@ import type * as line from '@line/bot-sdk';
 import 'dayjs/locale/ja';
 import type * as discord from 'discord.js';
 
-const mesageCache = new Map<string, [line.MessageEvent, line.TextEventMessage]>();
+const lineMesageCache = new Map<string, string>();
 
 export const lineSynchronizeText: Klass<PushClient, LineMessageEventModule<line.TextEventMessage>> = (push) => ({
   name: 'LineSynchronizeText',
   listener: async (client, event, message) => {
-    mesageCache.set(message.id, [event, message]);
     const profile = (await getLineProfile(client.line, event.source)).get();
-    if (message.quotedMessageId && mesageCache.has(message.quotedMessageId)) {
-      const [quotedClient, quotedMessage] = mesageCache.get(message.quotedMessageId)!;
-      const quotedprofile = (await getLineProfile(client.line, quotedClient.source)).get();
-      const escape = (text: string) => text.split('\n').join('\n> ');
-      const text = `> ${quotedprofile.displayName}: ${escape(quotedMessage.text)}\n${message.text}`;
-      (await push.send(text, profile.displayName, profile.pictureUrl)).get();
+    const escape = (text: string) => text.split('\n').join('\n> ');
+    lineMesageCache.set(message.id, `> ${profile.displayName}: ${escape(message.text)}`);
+    if (message.quotedMessageId && lineMesageCache.has(message.quotedMessageId)) {
+      const quotedText = lineMesageCache.get(message.quotedMessageId);
+      (await push.send(`${quotedText}\n${message.text}`, profile.displayName, profile.pictureUrl)).get();
     } else if (message.quotedMessageId) {
       const text = `> 不明なメッセージ\n${message.text}`;
       (await push.send(text, profile.displayName, profile.pictureUrl)).get();
@@ -84,7 +82,14 @@ export const discordSynchronize: Klass<PushClient, DiscordMessageModule<discord.
 
     if (message.content != '') {
       const auther = message.author.username;
-      await push.send(message.content, auther);
+      if (message.reference && message.reference.messageId) {
+        const ref = await message.channel.messages.fetch(message.reference.messageId);
+        const escape = (text: string) => text.split('\n').join('\n> ');
+        const text = `${escape(ref.author.username)}>>${escape(ref.content)}\n[返信]${message.author.username}>>${message.content}`;
+        await push.send(text);
+      } else {
+        await push.send(message.content, auther);
+      }
     }
 
     const res = message.attachments.map(async (e) => {
