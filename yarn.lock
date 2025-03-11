@@ -3430,17 +3430,17 @@ tslib@^2.6.2, tslib@^2.6.3:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.8.1.tgz#612efe4ed235d567e8aba5f2a5fab70280ade83f"
   integrity sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==
 
-twitter-openapi-typescript-generated@^0.0.31:
-  version "0.0.31"
-  resolved "https://registry.yarnpkg.com/twitter-openapi-typescript-generated/-/twitter-openapi-typescript-generated-0.0.31.tgz#2ca8796ed94a4716b7d7978b76f03e32ad985038"
-  integrity sha512-slcJaz4frQLPfmbhcpWkiQZlTtssM+EHpGCegii25lbkfhUD7GoPDVAPLD9Cfy0HayBd671uBVWxSeHevo3O4w==
+twitter-openapi-typescript-generated@^0.0.35:
+  version "0.0.35"
+  resolved "https://registry.yarnpkg.com/twitter-openapi-typescript-generated/-/twitter-openapi-typescript-generated-0.0.35.tgz#515f31c52ca1b723a25e510dce6a907374e0c1fa"
+  integrity sha512-aUm6MBoJkPvUuDrZ0bioj2JZRcL/fJgsJrqd36dcH/o40TV+JbPOYpoFLK9q1lYqqSi95AmTWwmL2MGQpQqKaA==
 
-twitter-openapi-typescript@^0.0.44:
-  version "0.0.44"
-  resolved "https://registry.yarnpkg.com/twitter-openapi-typescript/-/twitter-openapi-typescript-0.0.44.tgz#4eb4e7db0f6aaa7dad9767a3d0e5d22bbd6b182e"
-  integrity sha512-VmYPFYWy4IKcH3QOqNISGsr8VSBZBzkLhbVW/dWbDQvJ0JyiESAviN2pTGkxk/q0mtBZEI+fSMjEJ0Y/KWsJIA==
+twitter-openapi-typescript@^0.0.47:
+  version "0.0.47"
+  resolved "https://registry.yarnpkg.com/twitter-openapi-typescript/-/twitter-openapi-typescript-0.0.47.tgz#045b6eebf0074beeeadbb7d8b3c9524800e1f4b5"
+  integrity sha512-JPOlBtHLCIzpTL6rvH0zuMsm04YnExUXJlUGRx9RkvgdSwTxVOvzHGHW62bwLQjPGsDgTswwTL/BzYqqjCwbeA==
   dependencies:
-    twitter-openapi-typescript-generated "^0.0.31"
+    twitter-openapi-typescript-generated "^0.0.35"
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"
