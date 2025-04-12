@@ -95,7 +95,7 @@ export const twitterSnap: Klass<twitterSnapParam, LineMessageEventModule<line.Te
       const matches = message.text.matchAll(regex);
 
       for (const [url, _, __, ___, ____, id] of matches) {
-        const cmd = `/usr/local/bin/npx twitter-snap ${url} -o "temp/${id}.{if-type:png:mp4:json:}" --session-type file --cookies-file cookie.json --simple-log --limit 1 --width 1440 --scale 2`;
+        const cmd = `/usr/local/bin/npx twitter-snap ${url} -o "temp/${id}.{if-type:png:mp4:json:}" --session-type file --cookies-file cookie.json --simple-log --limit 1 --width 1440 --scale 2 --ffmpegAdditonalOption "-c:v hevc_nvenc"`;
         await exec(cmd);
         const files = (await fs.readdir('temp')).filter((file) => file.includes(id));
 
@@ -113,7 +113,7 @@ export const twitterSnap: Klass<twitterSnapParam, LineMessageEventModule<line.Te
       const matches = message.text.matchAll(regex);
 
       for (const [url, _, id] of matches) {
-        const cmd = `/usr/local/bin/npx twitter-snap ${url} -o "temp/pixiv/${id}.{if-type:png:mp4:json:}" --session-type file --cookies-file cookie.json --simple-log --limit 1 --width 1440 --scale 2`;
+        const cmd = `/usr/local/bin/npx twitter-snap ${url} -o "temp/pixiv/${id}.{if-type:png:mp4:json:}" --session-type file --cookies-file cookie.json --simple-log --limit 1 --width 1440 --scale 2 --ffmpegAdditonalOption "-c:v hevc_nvenc"`;
         await exec(cmd);
         const files = (await fs.readdir('temp/pixiv')).filter((file) => file.includes(id));
 
