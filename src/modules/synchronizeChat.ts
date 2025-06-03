@@ -5,7 +5,7 @@ import { getLineProfile } from '@/utils/line';
 import { streamToBuffer } from '@/utils/webdav';
 import type * as line from '@line/bot-sdk';
 import 'dayjs/locale/ja';
-import type * as discord from 'discord.js';
+import * as discord from 'discord.js';
 
 const lineMesageCache = new Map<string, string>();
 
@@ -97,7 +97,44 @@ export const discordSynchronize: Klass<PushClient, DiscordMessageModule<discord.
       const buffer = results.get();
       const name = e.id + getExtension(e.name);
       const auther = message.author.username;
-      await push.sendFile(name, buffer, message.content, auther);
+      const promise = push.sendFile(name, buffer, message.content, auther);
+      if ('send' in message.channel && typeof message.channel.send === 'function') {
+        const button1 = new discord.ButtonBuilder()
+          .setCustomId(`resend:${message.id}`)
+          .setEmoji('🔁')
+          .setLabel('再送信')
+          .setStyle(discord.ButtonStyle.Primary);
+
+        const button2 = new discord.ButtonBuilder()
+          .setCustomId(`url:${message.id}`)
+          .setEmoji('🔗')
+          .setLabel('URLとして送信')
+          .setStyle(discord.ButtonStyle.Secondary);
+
+        const row = new discord.ActionRowBuilder().addComponents(button1, button2);
+
+        const msg = await message.reply({
+          components: [row.toJSON()],
+        });
+        const controller = msg.createMessageComponentCollector({
+          componentType: discord.ComponentType.Button,
+          time: 60 * 1000,
+        });
+        controller.on('collect', async (i) => {
+          if (i.customId === `resend:${message.id}`) {
+            await push.sendFile(name, buffer, message.content, auther);
+            await i.reply({ content: '再送信しました。', ephemeral: true });
+          } else if (i.customId === `url:${message.id}`) {
+            const url = await push.putFile(name, buffer);
+            await push.send(url, auther);
+            await i.reply({ content: 'URLを送信しました。', ephemeral: true });
+          }
+        });
+        controller.on('end', async () => {
+          await msg.delete();
+        });
+      }
+      await promise;
     });
 
     await Promise.all(res);

@@ -16,7 +16,7 @@
     "libsodium-wrappers": "^0.7.15",
     "log4js": "^6.9.1",
     "ts-node": "^10.9.2",
-    "twitter-openapi-typescript": "^0.0.53",
+    "twitter-openapi-typescript": "^0.0.55",
     "typescript": "^5.8.3",
     "webdav": "<5.0.0",
     "ytdl-core": "^4.11.5"
