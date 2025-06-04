@@ -98,7 +98,7 @@ export const hook: HookFn = (event) => {
     lineAudioMessageEventModule: [],
     lineLocationMessageEventModule: [],
     lineFileMessageEventModule: [],
-    lineStickerMessageEventModule: [lineSynchronizeSticker(stickerPush)],
+    lineStickerMessageEventModule: [],
     lineUnsendMessageEventModule: [],
     lineFollowMessageEventModule: [],
     lineUnfollowMessageEventModule: [],
@@ -123,6 +123,7 @@ export const hook: HookFn = (event) => {
     defaultHook.lineVideoMessageEventModule.push(lineSynchronizeFile(discordPush));
     defaultHook.lineAudioMessageEventModule.push(lineSynchronizeFile(discordPush));
     defaultHook.lineFileMessageEventModule.push(lineSynchronizeFile(discordPush));
+    defaultHook.lineStickerMessageEventModule.push(lineSynchronizeSticker(stickerPush));
   }
 
   if (event == env.getString('SUB_LINE_SYNCHRONIZE_CHAT.CHANNEL_ID')) {
