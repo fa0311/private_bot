@@ -1,10 +1,41 @@
-import * as dotenv from 'dotenv';
+import { config } from 'dotenv';
 
-dotenv.config({
-  path: process.env.DEVELP == 'true' ? '.develop.env' : undefined,
-});
+const environment = process.env.NODE_ENV as 'development' | 'production' | 'test';
 
-export const getString = (key: string, option?: string): string => process.env[key] ?? option ?? '';
-export const getNumber = (key: string, option?: number): number => {
-  return process.env[key] == undefined ? (option ?? 0) : Number(process.env[key]);
+export const getEnv = () => {
+  if (environment !== 'test') {
+    config();
+  }
+
+  const text = (key: string, defaultValue?: string): string => {
+    const value = process.env[key];
+    if (!value) {
+      if (defaultValue !== undefined) {
+        return defaultValue;
+      }
+      throw new Error(`Missing environment variable: ${key}`);
+    }
+    return value;
+  };
+
+  const textOr = (key: string): string | undefined => {
+    const value = process.env[key];
+    if (!value) {
+      return undefined;
+    }
+    return value;
+  };
+
+  const number = (key: string, defaultValue?: number): number => {
+    const value = process.env[key];
+    if (!value) {
+      if (defaultValue !== undefined) {
+        return defaultValue;
+      }
+      throw new Error(`Missing environment variable: ${key}`);
+    }
+    return Number(value);
+  };
+
+  return { text, textOr, number };
 };
