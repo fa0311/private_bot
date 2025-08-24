@@ -14,10 +14,10 @@ jobs:
         include:
           - dockerfile: "Dockerfile"
             tag: "basic"
-          - dockerfile: "Dockerfile.full"
-            tag: "full"
-          - dockerfile: "Dockerfile.light"
-            tag: "light"
+          # - dockerfile: "Dockerfile.full"
+          #   tag: "full"
+          # - dockerfile: "Dockerfile.light"
+          #   tag: "light"
 
     permissions:
       actions: write
