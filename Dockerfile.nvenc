@@ -1,0 +1,45 @@
+FROM nvidia/cuda:12.2.0-devel-ubuntu22.04 AS ffmpeg-builder
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential git pkg-config yasm nasm autoconf automake cmake \
+    libx264-dev libx265-dev libvpx-dev libopus-dev libass-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN git clone --depth 1 https://github.com/FFmpeg/nv-codec-headers.git /tmp/nv-codec-headers \
+    && make -C /tmp/nv-codec-headers && make -C /tmp/nv-codec-headers install
+
+ARG FFMPEG_TAG=6.0
+RUN git clone --depth 1 --branch ${FFMPEG_TAG} https://git.ffmpeg.org/ffmpeg.git /tmp/ffmpeg \
+    && cd /tmp/ffmpeg \
+    && ./configure --prefix=/usr/local \
+    --enable-gpl --enable-libx264 --enable-libx265 \
+    --enable-libvpx --enable-libopus --enable-libass \
+    --enable-nvenc --enable-nvdec \
+    && make -j$(nproc) && make install
+
+FROM node:22-alpine AS builder
+WORKDIR /app
+RUN npm install -g pnpm@10.15.0
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+COPY . .
+RUN pnpm build
+
+FROM nvidia/cuda:12.2.0-runtime-ubuntu22.04 AS production
+
+RUN apt-get update && apt-get install -y curl && \
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g pnpm@10.15.0 && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY --from=ffmpeg-builder /usr/local /usr/local
+
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --prod
+COPY --from=builder /app/dist ./dist
+
+EXPOSE 3000
+CMD ["pnpm", "start"]

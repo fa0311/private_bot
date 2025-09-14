@@ -8,14 +8,14 @@ on:
 jobs:
   build-docker-image:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         include:
           - dockerfile: "Dockerfile"
             tag: "basic"
-          # - dockerfile: "Dockerfile.full"
-          #   tag: "full"
+          - dockerfile: "Dockerfile.nvenc"
+            tag: "nvenc"
           # - dockerfile: "Dockerfile.light"
           #   tag: "light"
 
