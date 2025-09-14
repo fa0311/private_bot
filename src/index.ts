@@ -24,55 +24,55 @@ const logger = pino({
 });
 
 const DISCORD_BOT = {
-  TOKEN: env.text('DISCORD_BOT.TOKEN'),
+  TOKEN: env.text('DISCORD_BOT_TOKEN'),
 };
 
 const DISCORD_PUSH = {
-  TOKEN: env.text('DISCORD_PUSH.TOKEN'),
-  BASE_URL: env.text('DISCORD_PUSH.BASE_URL', 'https://discordapp.com/api/webhooks'),
+  TOKEN: env.text('DISCORD_PUSH_TOKEN'),
+  BASE_URL: env.text('DISCORD_PUSH_BASE_URL', 'https://discordapp.com/api/webhooks'),
 };
 
 const LINE_BOT = {
-  CHANNEL_ACCESS_TOKEN: env.text('LINE_BOT.CHANNEL_ACCESS_TOKEN'),
-  CHANNEL_SECRET: env.text('LINE_BOT.CHANNEL_SECRET'),
-  PORT: env.number('LINE_BOT.PORT', 8080),
-  ROUTE: env.text('LINE_BOT.ROUTE', '/webhook'),
+  CHANNEL_ACCESS_TOKEN: env.text('LINE_BOT_CHANNEL_ACCESS_TOKEN'),
+  CHANNEL_SECRET: env.text('LINE_BOT_CHANNEL_SECRET'),
+  PORT: env.number('LINE_BOT_PORT', 8080),
+  ROUTE: env.text('LINE_BOT_ROUTE', '/webhook'),
 };
 
 const LINE_PUSH = {
-  TOKEN: env.text('LINE_PUSH.TOKEN'),
-  BASE_URL: env.text('LINE_PUSH.BASE_URL', 'https://notify-api.line.me/api/notify'),
+  TOKEN: env.text('LINE_PUSH_TOKEN'),
+  BASE_URL: env.text('LINE_PUSH_BASE_URL', 'https://notify-api.line.me/api/notify'),
 };
 
 const LINE_SYNCHRONIZE_CHAT = {
-  CHANNEL_ID: env.text('LINE_SYNCHRONIZE_CHAT.CHANNEL_ID'),
+  CHANNEL_ID: env.text('LINE_SYNCHRONIZE_CHAT_CHANNEL_ID'),
 };
 
 const DISCORD_SYNCHRONIZE_CHAT = {
-  CHANNEL_ID: env.textOr('DISCORD_SYNCHRONIZE_CHAT.CHANNNEL_ID'),
-  GUILD_ID: env.textOr('DISCORD_SYNCHRONIZE_CHAT.GUILD_ID'),
+  CHANNEL_ID: env.textOr('DISCORD_SYNCHRONIZE_CHAT_CHANNEL_ID'),
+  GUILD_ID: env.textOr('DISCORD_SYNCHRONIZE_CHAT_GUILD_ID'),
 };
 
 const DISCORD_SYNCHRONIZE_VOICE = {
-  CHANNNEL_ID: env.textOr('DISCORD_SYNCHRONIZE_VOICE.CHANNEL_ID'),
-  GUILD_ID: env.textOr('DISCORD_SYNCHRONIZE_VOICE.GUILD_ID'),
+  CHANNEL_ID: env.textOr('DISCORD_SYNCHRONIZE_VOICE_CHANNEL_ID'),
+  GUILD_ID: env.textOr('DISCORD_SYNCHRONIZE_VOICE_GUILD_ID'),
 };
 
 const DISCORD_SET_PRESENCE = {
-  ACTIVITIES_NAME: env.text('DISCORD_SET_PRESENCE.ACTIVITIES_NAME'),
-  ACTIVITIES_URL: env.text('DISCORD_SET_PRESENCE.ACTIVITIES_URL'),
+  ACTIVITIES_NAME: env.text('DISCORD_SET_PRESENCE_ACTIVITIES_NAME'),
+  ACTIVITIES_URL: env.text('DISCORD_SET_PRESENCE_ACTIVITIES_URL'),
 };
 
 const WEBDAV = {
-  URL: env.text('WEBDAV.URL'),
-  USERNAME: env.text('WEBDAV.USERNAME'),
-  PASSWORD: env.text('WEBDAV.PASSWORD'),
-  BASE_PATH: env.text('WEBDAV.BASE_PATH', ''),
-  SHARE_BASE_URL: env.text('WEBDAV.SHARE_BASE_URL'),
+  URL: env.text('WEBDAV_URL'),
+  USERNAME: env.text('WEBDAV_USERNAME'),
+  PASSWORD: env.text('WEBDAV_PASSWORD'),
+  BASE_PATH: env.text('WEBDAV_BASE_PATH', ''),
+  SHARE_BASE_URL: env.text('WEBDAV_SHARE_BASE_URL'),
 };
 
 const TWITTER = {
-  COOKIE_FILE: env.text('TWITTER.COOKIE_FILE', 'cookie.json'),
+  COOKIE_FILE: env.text('TWITTER_COOKIE_FILE', 'cookie.json'),
 };
 
 const discordClient = await createDiscordClient(
@@ -321,7 +321,7 @@ discordClient.client.on(Events.VoiceStateUpdate, async (before, after) => {
   if (!member || !channel || !guild) return;
   if (member.user.bot) return;
   if (DISCORD_SYNCHRONIZE_VOICE.GUILD_ID && DISCORD_SYNCHRONIZE_VOICE.GUILD_ID === guild.id) return;
-  if (DISCORD_SYNCHRONIZE_VOICE.CHANNNEL_ID && DISCORD_SYNCHRONIZE_VOICE.CHANNNEL_ID === channel.id) return;
+  if (DISCORD_SYNCHRONIZE_VOICE.CHANNEL_ID && DISCORD_SYNCHRONIZE_VOICE.CHANNEL_ID === channel.id) return;
   if (after.channelId === before.channelId) return;
   const members = channel.members.filter((e) => !e.user.bot);
 
