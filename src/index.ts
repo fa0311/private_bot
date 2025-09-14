@@ -352,7 +352,7 @@ lineClient.client.on('text', async ({ body, event }) => {
   const responses = await twitterClient.fromText(event.text);
   const text: string[] = [];
 
-  for (const [[_, id], response] of responses) {
+  for (const [id, response] of responses) {
     if (response.data.data.length > 0) {
       const index = response.data.data.findIndex((e) => e.tweet.restId === id);
       for (const tweet of response.data.data.splice(0, index)) {
