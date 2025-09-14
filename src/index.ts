@@ -147,7 +147,7 @@ const lineMesageCache = lineQuotedMessageManager<{ name: string; message: string
 
 // LINEに来たメッセージをDiscordに転送
 lineClient.client.on('text', async ({ body, event }) => {
-  if (getSourceId(body) === LINE_SYNCHRONIZE_CHAT.CHANNEL_ID) return;
+  if (getSourceId(body) !== LINE_SYNCHRONIZE_CHAT.CHANNEL_ID) return;
   const profile = await lineClient.getProfile(body.source);
   lineMesageCache.set(event, { name: profile.displayName, message: event.text });
   const quotedText = lineMesageCache.get(event);
@@ -165,7 +165,7 @@ lineClient.client.on('text', async ({ body, event }) => {
 
 // LINEに来たスタンプをDiscordに転送
 lineClient.client.on('sticker', async ({ body, event }) => {
-  if (getSourceId(body) === LINE_SYNCHRONIZE_CHAT.CHANNEL_ID) return;
+  if (getSourceId(body) !== LINE_SYNCHRONIZE_CHAT.CHANNEL_ID) return;
   const { stickerId } = event;
   const dir = await storage.path(`sticker/${stickerId}.png`);
   if (!(await dir.exists())) {
@@ -348,7 +348,7 @@ discordClient.client.on(Events.VoiceStateUpdate, async (before, after) => {
 
 // LINEに来たツイートの詳細を表示する
 lineClient.client.on('text', async ({ body, event }) => {
-  if (getSourceId(body) === LINE_SYNCHRONIZE_CHAT.CHANNEL_ID) return;
+  if (getSourceId(body) !== LINE_SYNCHRONIZE_CHAT.CHANNEL_ID) return;
   const responses = await twitterClient.fromText(event.text);
   const text: string[] = [];
 
