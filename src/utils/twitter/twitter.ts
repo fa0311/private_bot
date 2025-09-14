@@ -1,6 +1,6 @@
 import { promises as fs } from 'node:fs';
 import { TwitterOpenApi } from 'twitter-openapi-typescript';
-import { exportTwitterUrl } from './utils';
+import { exportTwitterUrl } from './utils.js';
 
 export type Cookie = {
   name: string;
