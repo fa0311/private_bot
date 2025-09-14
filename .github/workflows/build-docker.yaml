@@ -14,10 +14,8 @@ jobs:
         include:
           - dockerfile: "Dockerfile"
             tag: "basic"
-          - dockerfile: "Dockerfile.nvenc"
-            tag: "nvenc"
-          # - dockerfile: "Dockerfile.light"
-          #   tag: "light"
+          # - dockerfile: "Dockerfile.nvenc"
+          #   tag: "nvenc"
 
     permissions:
       actions: write

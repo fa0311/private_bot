@@ -1,45 +1,78 @@
-FROM nvidia/cuda:12.2.0-devel-ubuntu22.04 AS ffmpeg-builder
+ARG CUDA_VER=12.4.1
+ARG UBUNTU_VER=22.04
+ARG FFMPEG_VERSION=7.0.2
+ARG NODE_VERSION=22.8.0
+
+FROM nvidia/cuda:${CUDA_VER}-devel-ubuntu${UBUNTU_VER} AS build-ffmpeg
+
+ARG FFMPEG_VERSION
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    MAKEFLAGS="-j$(nproc)"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential git pkg-config yasm nasm autoconf automake cmake \
-    libx264-dev libx265-dev libvpx-dev libopus-dev libass-dev \
+    git ca-certificates build-essential pkg-config yasm nasm curl \
     && rm -rf /var/lib/apt/lists/*
 
-RUN git clone --depth 1 https://github.com/FFmpeg/nv-codec-headers.git /tmp/nv-codec-headers \
-    && make -C /tmp/nv-codec-headers && make -C /tmp/nv-codec-headers install
+RUN git clone --depth=1 https://github.com/FFmpeg/nv-codec-headers.git /tmp/nv-codec-headers \
+    && make -C /tmp/nv-codec-headers install
 
-ARG FFMPEG_TAG=6.0
-RUN git clone --depth 1 --branch ${FFMPEG_TAG} https://git.ffmpeg.org/ffmpeg.git /tmp/ffmpeg \
-    && cd /tmp/ffmpeg \
-    && ./configure --prefix=/usr/local \
-    --enable-gpl --enable-libx264 --enable-libx265 \
-    --enable-libvpx --enable-libopus --enable-libass \
-    --enable-nvenc --enable-nvdec \
-    && make -j$(nproc) && make install
+RUN git clone --depth=1 --branch "n${FFMPEG_VERSION}" --single-branch \
+    https://github.com/FFmpeg/FFmpeg.git /tmp/ffmpeg
 
-FROM node:22-alpine AS builder
+# NVENC 対応でビルド
+RUN cd /tmp/ffmpeg \
+    && ./configure \
+    --prefix=/opt/ffmpeg \
+    --disable-debug \
+    --disable-doc \
+    --disable-ffplay \
+    --enable-gpl \
+    --enable-nonfree \
+    --enable-nvenc \
+    --extra-cflags="-I/usr/local/cuda/include" \
+    --extra-ldflags="-L/usr/local/cuda/lib64" \
+    && make \
+    && make install
+
+FROM node:22 AS node-build
 WORKDIR /app
+
 RUN npm install -g pnpm@10.15.0
+
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
+
 COPY . .
 RUN pnpm build
 
-FROM nvidia/cuda:12.2.0-runtime-ubuntu22.04 AS production
+FROM nvidia/cuda:${CUDA_VER}-runtime-ubuntu${UBUNTU_VER} AS runtime
 
-RUN apt-get update && apt-get install -y curl && \
-    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
-    apt-get install -y nodejs && \
-    npm install -g pnpm@10.15.0 && \
-    rm -rf /var/lib/apt/lists/*
+ARG NODE_VERSION
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PATH="/opt/ffmpeg/bin:/opt/node/bin:${PATH}"
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl ca-certificates xz-utils \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" -o /tmp/node.tar.xz \
+    && mkdir -p /opt/node \
+    && tar -xJf /tmp/node.tar.xz -C /opt/node --strip-components=1 \
+    && ln -s /opt/node/bin/node /usr/local/bin/node \
+    && ln -s /opt/node/bin/npm /usr/local/bin/npm \
+    && ln -s /opt/node/bin/npx /usr/local/bin/npx \
+    && npm install -g pnpm@10.15.0 \
+    && rm -f /tmp/node.tar.xz
+
+COPY --from=build-ffmpeg /opt/ffmpeg /opt/ffmpeg
 
 WORKDIR /app
-
-COPY --from=ffmpeg-builder /usr/local /usr/local
-
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --prod
-COPY --from=builder /app/dist ./dist
+
+COPY --from=node-build /app/dist ./dist
 
 EXPOSE 3000
+
 CMD ["pnpm", "start"]
