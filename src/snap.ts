@@ -6,7 +6,7 @@ import { createLineNotifyClient } from './utils/line/webhook.js';
 import { createTaskQueue } from './utils/queue.js';
 import { createWebdavClient } from './utils/storage/storage.js';
 import { createTwitterSnapClient } from './utils/twitter/twitter-snap.js';
-import { exportPixivUrl, exportTwitterUrl } from './utils/twitter/utils.js';
+import { encodeCheck, exportPixivUrl, exportTwitterUrl } from './utils/twitter/utils.js';
 
 const env = getEnv();
 
