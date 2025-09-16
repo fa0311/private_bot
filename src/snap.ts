@@ -21,27 +21,28 @@ const logger = pino({
 });
 
 const LINE_BOT = {
-  CHANNEL_ACCESS_TOKEN: env.text('LINE_BOT.CHANNEL_ACCESS_TOKEN'),
-  CHANNEL_SECRET: env.text('LINE_BOT.CHANNEL_SECRET'),
-  PORT: env.number('LINE_BOT.PORT', 8080),
-  ROUTE: env.text('LINE_BOT.ROUTE', '/webhook'),
+  CHANNEL_ACCESS_TOKEN: env.text('LINE_BOT_CHANNEL_ACCESS_TOKEN'),
+  CHANNEL_SECRET: env.text('LINE_BOT_CHANNEL_SECRET'),
+  PORT: env.number('LINE_BOT_PORT', 8080),
+  ROUTE: env.text('LINE_BOT_ROUTE', '/webhook'),
 };
 
 const LINE_PUSH = {
-  TOKEN: env.text('LINE_PUSH.TOKEN'),
-  BASE_URL: env.text('LINE_PUSH.BASE_URL', 'https://notify-api.line.me/api/notify'),
+  TOKEN: env.text('LINE_PUSH_TOKEN'),
+  BASE_URL: env.text('LINE_PUSH_BASE_URL', 'https://notify-api.line.me/api/notify'),
 };
 
 const WEBDAV = {
   URL: env.text('WEBDAV.URL'),
-  USERNAME: env.text('WEBDAV.USERNAME'),
-  PASSWORD: env.text('WEBDAV.PASSWORD'),
-  BASE_PATH: env.text('WEBDAV.BASE_PATH', ''),
-  SHARE_BASE_URL: env.text('WEBDAV.SHARE_BASE_URL'),
+  USERNAME: env.text('WEBDAV_USERNAME'),
+  PASSWORD: env.text('WEBDAV_PASSWORD'),
+  BASE_PATH: env.text('WEBDAV_BASE_PATH', ''),
+  SHARE_BASE_URL: env.text('WEBDAV_SHARE_BASE_URL'),
 };
 
 const TWITTER = {
-  COOKIE_FILE: env.text('TWITTER.COOKIE_FILE', 'cookie.json'),
+  COOKIE_FILE: env.text('TWITTER_COOKIE_FILE', 'cookie.json'),
+  FFMPEG_ADDITONAL_OPTION: env.textOr('TWITTER_FFMPEG_ADDITIONAL_OPTION'),
 };
 
 const lineClient = await createLineClient(
@@ -57,7 +58,7 @@ const lineClient = await createLineClient(
 
 const snap = await createTwitterSnapClient({
   cookiesFile: TWITTER.COOKIE_FILE,
-  ffmpegAdditonalOption: env.textOr('TWITTER.FFMPEG_ADDITIONAL_OPTION'),
+  ffmpegAdditonalOption: TWITTER.FFMPEG_ADDITONAL_OPTION,
 });
 const linePush = createLineNotifyClient({
   token: LINE_PUSH.TOKEN,

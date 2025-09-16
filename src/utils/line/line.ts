@@ -56,7 +56,7 @@ export const createLineClient = async (config: ConfigType, expressConfig: { port
       client.emit(event.type, { body: event as any });
       if (event.type === 'message') {
         client.emit(event.message.type, { body: event as any, event: event.message as any });
-        if (event.type in hasContentsType) {
+        if (hasContentsType.includes(event.message.type as typeof hasContentsType[number])) {
           client.emit('hasContents', { body: event as any, event: event.message as any });
         }
       }

@@ -57,6 +57,7 @@ export const createWebdavClient = (config: WebdavConfig) => {
       return client.createWriteStream(storagePath);
     };
     const putFileContents = async (data: ByteType) => {
+      await makedirs({ file: storagePath });
       return client.putFileContents(storagePath, data);
     };
     const exists = async () => {
