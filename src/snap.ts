@@ -33,7 +33,7 @@ const LINE_PUSH = {
 };
 
 const WEBDAV = {
-  URL: env.text('WEBDAV.URL'),
+  URL: env.text('WEBDAV_URL'),
   USERNAME: env.text('WEBDAV_USERNAME'),
   PASSWORD: env.text('WEBDAV_PASSWORD'),
   BASE_PATH: env.text('WEBDAV_BASE_PATH', ''),
