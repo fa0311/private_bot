@@ -84,6 +84,7 @@ const processSnapQueue = createTaskQueue(1, (error) => {
 });
 
 lineClient.client.on('text', async ({ body, event }) => {
+  logger.info(`Received message: ${event.text}`);
   for (const id of exportTwitterUrl(event.text)) {
     const tempFile = 'temp/twitter';
     const userId = body.source.userId ?? 'unknown';

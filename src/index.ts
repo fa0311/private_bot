@@ -147,6 +147,7 @@ const lineMesageCache = lineQuotedMessageManager<{ name: string; message: string
 
 // LINEに来たメッセージをDiscordに転送
 lineClient.client.on('text', async ({ body, event }) => {
+  logger.info(`Received message: ${event.text}`);
   if (getSourceId(body) !== LINE_SYNCHRONIZE_CHAT.CHANNEL_ID) return;
   const profile = await lineClient.getProfile(body.source);
   lineMesageCache.set(event, { name: profile.displayName, message: event.text });
