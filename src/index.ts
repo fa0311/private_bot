@@ -24,6 +24,10 @@ const logger = pino({
   },
 });
 
+const BOT = {
+  SEND_READY_MESSAGE: env.boolean('BOT_SEND_READY_MESSAGE', true),
+};
+
 const DISCORD_BOT = {
   TOKEN: env.text('DISCORD_BOT_TOKEN'),
 };
@@ -123,8 +127,10 @@ const pushMessage = async (text: string) => {
   await discordPush.send({ content: text }).catch(ignoreError);
 };
 
-await linePush.sendMessage('Ready').catch(ignoreError);
-await discordPush.send({ content: 'Ready' }).catch(ignoreError);
+if (BOT.SEND_READY_MESSAGE) {
+  await linePush.sendMessage('Ready').catch(ignoreError);
+  await discordPush.send({ content: 'Ready' }).catch(ignoreError);
+}
 logger.info('Ready');
 
 lineClient.client.on('error', (error) => {

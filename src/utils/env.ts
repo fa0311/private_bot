@@ -37,5 +37,16 @@ export const getEnv = () => {
     return Number(value);
   };
 
-  return { text, textOr, number };
+  const boolean = (key: string, defaultValue?: boolean): boolean => {
+    const value = process.env[key];
+    if (!value) {
+      if (defaultValue !== undefined) {
+        return defaultValue;
+      }
+      throw new Error(`Missing environment variable: ${key}`);
+    }
+    return value.toLowerCase() === 'true' || value === '1';
+  };
+
+  return { text, textOr, number , boolean };
 };

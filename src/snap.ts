@@ -20,6 +20,10 @@ const logger = pino({
   },
 });
 
+const BOT = {
+  SEND_READY_MESSAGE: env.boolean('BOT_SEND_READY_MESSAGE', false),
+};
+
 const LINE_BOT = {
   CHANNEL_ACCESS_TOKEN: env.text('LINE_BOT_CHANNEL_ACCESS_TOKEN'),
   CHANNEL_SECRET: env.text('LINE_BOT_CHANNEL_SECRET'),
@@ -75,6 +79,12 @@ const storage = createWebdavClient({
 
 const ignoreError = (error: unknown) => logger.error(error);
 
+if (BOT.SEND_READY_MESSAGE) {
+  await linePush.sendMessage('Ready').catch(ignoreError);
+  await discordPush.send({ content: 'Ready' }).catch(ignoreError);
+}
+logger.info('Ready');
+
 lineClient.client.on('error', (error) => {
   logger.error(error);
 });
@@ -123,7 +133,6 @@ lineClient.client.on('text', async ({ body, event }) => {
     });
   }
 });
-
 
 // デバッグ用
 lineClient.client.on('text', async ({ body, event }) => {
