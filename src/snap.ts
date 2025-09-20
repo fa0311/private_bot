@@ -5,7 +5,7 @@ import { createLineClient } from './utils/line/line.js';
 import { createLineNotifyClient } from './utils/line/webhook.js';
 import { createTaskQueue } from './utils/queue.js';
 import { createWebdavClient } from './utils/storage/storage.js';
-import { createTwitterSnapClient } from './utils/twitter/twitter-snap.js';
+import { createTwitterSnapClient, getRand } from './utils/twitter/twitter-snap.js';
 import { encodeCheck, exportPixivUrl, exportTwitterUrl } from './utils/twitter/utils.js';
 
 const env = getEnv();
@@ -99,13 +99,14 @@ lineClient.client.on('text', async ({ body, event }) => {
     const userId = body.source.userId ?? 'unknown';
 
     processSnapQueue.add(async ({ index, getTotal }) => {
-      const files = await snap.twitterSnap(tempFile, id);
+      const rand = getRand();
+      const files = await snap(id, tempFile);
       const res = await Promise.all(
         files.map(async (file) => {
           const dir = await storage.path(`snap/${userId}/${file}`);
-          const data = await fs.readFile(`${tempFile}/${file}`);
+          const data = await fs.readFile(`${tempFile}/${rand}/${file}`);
           await dir.putFileContents(data);
-          await fs.unlink(`${tempFile}/${file}`).catch(ignoreError);
+          await fs.unlink(`${tempFile}/${rand}/${file}`).catch(ignoreError);
           return dir.url;
         })
       );
@@ -118,13 +119,14 @@ lineClient.client.on('text', async ({ body, event }) => {
     const userId = body.source.userId ?? 'unknown';
 
     processSnapQueue.add(async ({ index, getTotal }) => {
-      const files = await snap.pixivSnap(tempFile, id);
+      const rand = getRand();
+      const files = await snap(id, `${tempFile}/${rand}`);
       const res = await Promise.all(
         files.map(async (file) => {
           const dir = await storage.path(`snap/${userId}/pixiv/${file}`);
-          const data = await fs.readFile(`${tempFile}/${file}`);
+          const data = await fs.readFile(`${tempFile}/${rand}/${file}`);
           await dir.putFileContents(data);
-          await fs.unlink(`${tempFile}/${file}`).catch(ignoreError);
+          await fs.unlink(`${tempFile}/${rand}/${file}`).catch(ignoreError);
           return dir.url;
         })
       );
