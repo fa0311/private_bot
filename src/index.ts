@@ -361,7 +361,7 @@ lineClient.client.on('text', async ({ body, event }) => {
 
   for (const [id, response] of responses) {
     if (response.data.data.length > 0) {
-      const index = response.data.data.findIndex((e) => e.tweet.restId === id);
+      const index = response.data.data.findIndex((e) => e.tweet.restId === id[2]);
       for (const tweet of response.data.data.splice(0, index)) {
         text.push(tweet.user.legacy.name);
         text.push(tweetNormalize(tweet.tweet));

@@ -27,7 +27,7 @@ export const createTwitterClient = async (filename: string) => {
   const fromText = (text: string) => {
     const urls = exportTwitterUrl(text);
     return sequentialMap(urls, async (e) => {
-      return [e, await client.getTweetApi().getTweetDetail({ focalTweetId: e })] as const;
+      return [e, await client.getTweetApi().getTweetDetail({ focalTweetId: e[2] })] as const;
     });
   };
 
