@@ -12,6 +12,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git ca-certificates build-essential pkg-config yasm nasm curl \
+    libssl-dev libgnutls28-dev libcurl4-openssl-dev \
+    libpng-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN git clone --depth=1 https://github.com/FFmpeg/nv-codec-headers.git /tmp/nv-codec-headers \
@@ -30,6 +32,7 @@ RUN cd /tmp/ffmpeg \
     --enable-gpl \
     --enable-nonfree \
     --enable-nvenc \
+    --enable-openssl \
     --extra-cflags="-I/usr/local/cuda/include" \
     --extra-ldflags="-L/usr/local/cuda/lib64" \
     && make \
