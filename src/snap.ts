@@ -100,7 +100,7 @@ lineClient.client.on('text', async ({ body, event }) => {
 
     processSnapQueue.add(async ({ index, getTotal }) => {
       const rand = getRand();
-      const files = await snap(id, tempFile);
+      const files = await snap(id, `${tempFile}/${rand}`);
       const res = await Promise.all(
         files.map(async (file) => {
           const dir = await storage.path(`snap/${userId}/${file}`);
