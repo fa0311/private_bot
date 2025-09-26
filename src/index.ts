@@ -82,7 +82,7 @@ const TWITTER = {
 
 const discordClient = await createDiscordClient(
   {
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates],
   },
   DISCORD_BOT.TOKEN
 );
