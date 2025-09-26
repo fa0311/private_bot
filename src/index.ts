@@ -328,8 +328,8 @@ discordClient.client.on(Events.VoiceStateUpdate, async (before, after) => {
   const guild = before.guild ?? after.guild;
   if (!member || !channel || !guild) return;
   if (member.user.bot) return;
-  if (DISCORD_SYNCHRONIZE_VOICE.GUILD_ID && DISCORD_SYNCHRONIZE_VOICE.GUILD_ID === guild.id) return;
-  if (DISCORD_SYNCHRONIZE_VOICE.CHANNEL_ID && DISCORD_SYNCHRONIZE_VOICE.CHANNEL_ID === channel.id) return;
+  if (DISCORD_SYNCHRONIZE_VOICE.GUILD_ID && DISCORD_SYNCHRONIZE_VOICE.GUILD_ID !== guild.id) return;
+  if (DISCORD_SYNCHRONIZE_VOICE.CHANNEL_ID && DISCORD_SYNCHRONIZE_VOICE.CHANNEL_ID !== channel.id) return;
   if (after.channelId === before.channelId) return;
   const members = channel.members.filter((e) => !e.user.bot);
 
