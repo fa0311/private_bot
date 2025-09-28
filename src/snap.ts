@@ -2,7 +2,7 @@ import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
 import pino from "pino";
 import { z } from "zod";
-import { getEnv } from "./utils/env.js";
+import { getEnv, zBoolean } from "./utils/env.js";
 import { createLineClient } from "./utils/line/line.js";
 import { createLineNotifyClient } from "./utils/line/webhook.js";
 import { createWebdavClient } from "./utils/storage/storage.js";
@@ -12,7 +12,7 @@ import { exportPixivUrl, exportTwitterUrl } from "./utils/twitter/utils.js";
 const env = await getEnv(
   z.object({
     LOG_LEVEL: z.string().default("info"),
-    BOT_SEND_READY_MESSAGE: z.coerce.boolean().default(true),
+    BOT_SEND_READY_MESSAGE: zBoolean().default(false),
 
     LINE_BOT_CHANNEL_ACCESS_TOKEN: z.string(),
     LINE_BOT_CHANNEL_SECRET: z.string(),

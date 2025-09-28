@@ -4,7 +4,7 @@ import { z } from "zod";
 import { createDiscordClient, getUrl } from "./utils/discord/discord.js";
 import { toQuoted, toSummary } from "./utils/discord/utils.js";
 import { createDiscordWebHookClient } from "./utils/discord/webhook.js";
-import { getEnv } from "./utils/env.js";
+import { getEnv, zBoolean } from "./utils/env.js";
 import { createLineClient, getSourceId, lineQuotedMessageManager } from "./utils/line/line.js";
 import { getSticker } from "./utils/line/sticker.js";
 import { createLineNotifyClient } from "./utils/line/webhook.js";
@@ -16,7 +16,7 @@ import { tweetNormalize } from "./utils/twitter.js";
 const env = await getEnv(
   z.object({
     LOG_LEVEL: z.string().default("info"),
-    BOT_SEND_READY_MESSAGE: z.coerce.boolean().default(true),
+    BOT_SEND_READY_MESSAGE: zBoolean().default(false),
 
     LINE_BOT_CHANNEL_ACCESS_TOKEN: z.string(),
     LINE_BOT_CHANNEL_SECRET: z.string(),
