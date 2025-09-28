@@ -1,6 +1,6 @@
-import { promises as fs } from 'node:fs';
-import { TwitterOpenApi } from 'twitter-openapi-typescript';
-import { exportTwitterUrl } from './utils.js';
+import { promises as fs } from "node:fs";
+import { TwitterOpenApi } from "twitter-openapi-typescript";
+import { exportTwitterUrl } from "./utils.js";
 
 export type Cookie = {
   name: string;
@@ -18,10 +18,10 @@ const sequentialMap = async <T, U>(array: T[], callback: (item: T) => Promise<U>
 
 export const createTwitterClient = async (filename: string) => {
   const api = new TwitterOpenApi();
-  const data = await fs.readFile(filename, 'utf-8');
+  const data = await fs.readFile(filename, "utf-8");
   const parsed = JSON.parse(data);
   const cookies = parsed as Cookie[];
-  const json = Object.fromEntries(cookies.filter((e) => e.domain === '.x.com').map((e) => [e.name, e.value]));
+  const json = Object.fromEntries(cookies.filter((e) => e.domain === ".x.com").map((e) => [e.name, e.value]));
   const client = await api.getClientFromCookies(json);
 
   const fromText = (text: string) => {

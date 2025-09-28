@@ -8,10 +8,10 @@ export const createLineNotifyClient = (webHookOptions: WebHookOptions) => {
 
   const sendMessage = async (message: string) => {
     const response = await fetch(baseUrl, {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
+        "Content-Type": "application/x-www-form-urlencoded",
       },
       body: new URLSearchParams({ message }),
     });
@@ -22,13 +22,13 @@ export const createLineNotifyClient = (webHookOptions: WebHookOptions) => {
 
   const sendFile = async (body: { name: string; image: Blob; message?: string; user?: string }) => {
     const formData = new FormData();
-    formData.append('imageFile', body.image);
+    formData.append("imageFile", body.image);
     if (body.message) {
-      formData.append('message', body.message);
+      formData.append("message", body.message);
     }
 
     const response = await fetch(baseUrl, {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },

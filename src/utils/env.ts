@@ -1,52 +1,14 @@
-import { config } from 'dotenv';
+import { config } from "dotenv";
 
-const environment = process.env.NODE_ENV as 'development' | 'production' | 'test';
+import type { z } from "zod";
 
-export const getEnv = () => {
-  if (environment !== 'test') {
-    config();
+export const getEnv = async <T extends z.ZodRawShape>(schema: z.ZodObject<T>) => {
+  config();
+  const parsed = await schema.safeParseAsync(process.env);
+  if (parsed.success) {
+    return parsed.data;
+  } else {
+    console.error(parsed.error.format((issue) => `Error at ${issue.path.join(".")} - ${issue.message}`));
+    throw new Error("Invalid environment variables");
   }
-
-  const text = (key: string, defaultValue?: string): string => {
-    const value = process.env[key];
-    if (!value) {
-      if (defaultValue !== undefined) {
-        return defaultValue;
-      }
-      throw new Error(`Missing environment variable: ${key}`);
-    }
-    return value;
-  };
-
-  const textOr = (key: string): string | undefined => {
-    const value = process.env[key];
-    if (!value) {
-      return undefined;
-    }
-    return value;
-  };
-
-  const number = (key: string, defaultValue?: number): number => {
-    const value = process.env[key];
-    if (!value) {
-      if (defaultValue !== undefined) {
-        return defaultValue;
-      }
-      throw new Error(`Missing environment variable: ${key}`);
-    }
-    return Number(value);
-  };
-
-  const boolean = (key: string, defaultValue?: boolean): boolean => {
-    const value = process.env[key];
-    if (!value) {
-      if (defaultValue !== undefined) {
-        return defaultValue;
-      }
-      throw new Error(`Missing environment variable: ${key}`);
-    }
-    return value.toLowerCase() === 'true' || value === '1';
-  };
-
-  return { text, textOr, number , boolean };
 };

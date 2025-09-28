@@ -23,13 +23,6 @@
       }
     }
   },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "single",
-      "semicolons": "always",
-      "trailingCommas": "es5"
-    }
-  },
   "json": {
     "formatter": {
       "enabled": true

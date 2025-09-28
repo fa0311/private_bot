@@ -1,14 +1,13 @@
 {
   "editor.rulers": [120],
   "npm.packageManager": "pnpm",
-  "[jsonc]": {
+  "[typescript][json]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
-  "[json]": {
-    "editor.defaultFormatter": "biomejs.biome" 
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "[typescript]": {
-    "editor.defaultFormatter": "biomejs.biome",
-  },
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "never"
+  }
 }
-

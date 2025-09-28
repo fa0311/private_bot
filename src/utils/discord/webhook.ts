@@ -8,9 +8,9 @@ export const createDiscordWebHookClient = (webHookOptions: WebHookOptions) => {
 
   const send = async (body: { content?: string; username?: string; avatar_url?: string }) => {
     const response = await fetch(`${baseUrl}/${token}`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
     });
