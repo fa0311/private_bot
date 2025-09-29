@@ -10,7 +10,6 @@ import { getSticker } from "./utils/line/sticker.js";
 import { createLineNotifyClient } from "./utils/line/webhook.js";
 import { createWebdavClient, dateFormat, streamToBuffer } from "./utils/storage/storage.js";
 import { createTwitterClient } from "./utils/twitter/twitter.js";
-import { encodeCheck } from "./utils/twitter/utils.js";
 import { tweetNormalize } from "./utils/twitter.js";
 
 const env = await getEnv(
@@ -395,48 +394,5 @@ lineClient.client.on("text", async ({ body, event }) => {
         })
         .catch(ignoreError);
     });
-  }
-
-  if (event.text === "/status") {
-    const codes = {
-      nvenc: [["h264_nvenc", "mp4"] as const, ["hevc_nvenc", "mp4"] as const, ["av1_nvenc", "webm"] as const],
-      qsv: [
-        ["h264_qsv", "mp4"] as const,
-        ["hevc_qsv", "mp4"] as const,
-        ["av1_qsv", "webm"] as const,
-        ["vp9_qsv", "webm"] as const,
-      ],
-      vaapi: [
-        ["h264_vaapi", "mp4"] as const,
-        ["hevc_vaapi", "mp4"] as const,
-        ["av1_vaapi", "webm"] as const,
-        ["vp8_vaapi", "webm"] as const,
-        ["vp9_vaapi", "webm"] as const,
-      ],
-      vulkan: [["h264_vulkan", "mp4"] as const, ["hevc_vulkan", "mp4"] as const, ["av1_vulkan", "webm"] as const],
-    };
-    const text = await Promise.all(
-      Object.entries(codes).map(async ([key, values]) => {
-        const res = await Promise.all(
-          values.map(async ([codec, format]) => {
-            const ok = await encodeCheck({ format, codec });
-            return `${ok ? "✅" : "❌"}${codec}`;
-          }),
-        );
-        return [`=== ${key} ===`, ...res].join("\n");
-      }),
-    );
-
-    await lineClient.api
-      .replyMessage({
-        replyToken: replyToken,
-        messages: [
-          {
-            type: "text",
-            text: text.join("\n\n"),
-          },
-        ],
-      })
-      .catch(ignoreError);
   }
 });

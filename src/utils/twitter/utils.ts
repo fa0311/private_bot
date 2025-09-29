@@ -1,5 +1,3 @@
-import { spawn } from "node:child_process";
-
 const arrayStringChecker = (arr: unknown, length: number): arr is string[] => {
   return Array.isArray(arr) && arr.length === length && arr.every((e) => typeof e === "string");
 };
@@ -25,28 +23,4 @@ export const exportPixivUrl = (text: string) => {
     .map((e) => [e[0], e[2]])
     .filter((url): url is [string, string] => arrayStringChecker(url, 2));
   return urls;
-};
-
-export const exec = (cmd: string): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    try {
-      const child = spawn(cmd, { shell: "/bin/bash" });
-      child.on("close", (code) => {
-        if (code === 0) {
-          resolve();
-        } else {
-          reject();
-        }
-      });
-    } catch (_) {
-      reject();
-    }
-  });
-};
-
-export const encodeCheck = ({ format, codec }: { format: string; codec: string }): Promise<boolean> => {
-  const res = exec(
-    `ffmpeg -f lavfi -i testsrc=duration=1:size=427x240:rate=5 -c:v ${codec} -preset default -y -f ${format} /dev/null`,
-  );
-  return res.then(() => true).catch(() => false);
 };
