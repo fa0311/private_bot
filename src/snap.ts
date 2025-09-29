@@ -84,7 +84,8 @@ lineClient.client.on("text", async ({ body, event }) => {
   for (const id of exportTwitterUrl(event.text)) {
     const userId = body.source.userId ?? "unknown";
     const res = await snap.twitter(id[2]);
-    const dir = await storage.path(`snap/${userId}/${id[2]}`);
+    const ext = getExtByContentType(res.contentType);
+    const dir = await storage.path(`snap/${userId}/${id[2]}.${ext}`);
     const nodeReadable = Readable.fromWeb(res.body);
     const nodeWriteStream = await dir.createWriteStream({
       headers: {
@@ -92,7 +93,6 @@ lineClient.client.on("text", async ({ body, event }) => {
         "Content-Length": res.length,
       },
     });
-    const ext = getExtByContentType(res.contentType);
     await pipeline(nodeReadable, nodeWriteStream);
     await linePush.sendMessage(`スナップしました\n${dir.url}.${ext}`).catch(ignoreError);
   }
@@ -100,7 +100,8 @@ lineClient.client.on("text", async ({ body, event }) => {
   for (const id of exportPixivUrl(event.text)) {
     const userId = body.source.userId ?? "unknown";
     const res = await snap.pixiv(id[1]);
-    const dir = await storage.path(`snap/${userId}/pixiv/${id[1]}`);
+    const ext = getExtByContentType(res.contentType);
+    const dir = await storage.path(`snap/${userId}/pixiv/${id[1]}.${ext}`);
     const nodeReadable = Readable.fromWeb(res.body);
     const nodeWriteStream = await dir.createWriteStream({
       headers: {
@@ -108,7 +109,6 @@ lineClient.client.on("text", async ({ body, event }) => {
         "Content-Length": res.length,
       },
     });
-    const ext = getExtByContentType(res.contentType);
     await pipeline(nodeReadable, nodeWriteStream);
     await linePush.sendMessage(`スナップしました\n${dir.url}.${ext}`).catch(ignoreError);
   }
