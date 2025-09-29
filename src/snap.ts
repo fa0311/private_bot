@@ -71,6 +71,7 @@ const storage = createWebdavClient({
 const ignoreError = (error: unknown) => logger.error(error);
 const errorHandler = async (callback: () => Promise<void>) => {
   await callback().catch(async (error) => {
+    logger.error(error);
     await linePush.sendMessage(`Error: ${error}`).catch(ignoreError);
   });
 };
