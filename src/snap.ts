@@ -87,10 +87,10 @@ lineClient.client.on("error", (error) => {
   logger.error(error);
 });
 
-const checkStorage = async (userId: string, id: string) => {
+const checkStorage = async (name: string) => {
   const existsCheck = await Promise.all(
     ["png", "mp4"].map(async (ext) => {
-      const path = storage.path(`snap/${userId}/${id}.${ext}`);
+      const path = storage.path(`${name}.${ext}`);
       const exists = await path.exists();
       return [path.url, exists] as const;
     }),
@@ -105,7 +105,7 @@ lineClient.client.on("text", async ({ body, event }) => {
     for (const [_, __, id] of exportTwitterUrl(event.text)) {
       await errorHandler(async () => {
         const userId = body.source.userId ?? "unknown";
-        const exists = await checkStorage(userId, id);
+        const exists = await checkStorage(`snap/${userId}/${id}`);
         if (exists) {
           await linePush.sendMessage(`既にスナップ済みです\n${exists}`).catch(ignoreError);
         } else {
@@ -128,7 +128,7 @@ lineClient.client.on("text", async ({ body, event }) => {
     for (const [_, id] of exportPixivUrl(event.text)) {
       await errorHandler(async () => {
         const userId = body.source.userId ?? "unknown";
-        const exists = await checkStorage(userId, id);
+        const exists = await checkStorage(`snap/${userId}/pixiv/${id}`);
         if (exists) {
           await linePush.sendMessage(`既にスナップ済みです\n${exists}`).catch(ignoreError);
         } else {
