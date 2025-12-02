@@ -85,41 +85,63 @@ lineClient.client.on("error", (error) => {
   logger.error(error);
 });
 
+const checkStorage = async (userId: string, id: string) => {
+  const existsCheck = await Promise.all(
+    ["png", "mp4"].map(async (ext) => {
+      const path = storage.path(`snap/${userId}/${id}.${ext}`);
+      const exists = await path.exists();
+      return [path.url, exists] as const;
+    }),
+  );
+  const exists = existsCheck.find(([_, exists]) => exists);
+  return exists ? exists[0] : null;
+};
+
 lineClient.client.on("text", async ({ body, event }) => {
   logger.info(`Received message: ${event.text}`);
-  for (const id of exportTwitterUrl(event.text)) {
+  for (const [_, __, id] of exportTwitterUrl(event.text)) {
     await errorHandler(async () => {
       const userId = body.source.userId ?? "unknown";
-      const res = await snap.twitter(id[2]);
-      const ext = getExtByContentType(res.contentType);
-      const dir = await storage.path(`snap/${userId}/${id[2]}.${ext}`);
-      const nodeReadable = Readable.fromWeb(res.body);
-      const nodeWriteStream = await dir.createWriteStream({
-        headers: {
-          "Content-Type": res.contentType,
-          "Content-Length": res.length,
-        },
-      });
-      await pipeline(nodeReadable, nodeWriteStream);
-      await linePush.sendMessage(`スナップしました\n${dir.url}`).catch(ignoreError);
+      const exists = await checkStorage(userId, id);
+      if (exists) {
+        await linePush.sendMessage(`既にスナップ済みです\n${exists}`).catch(ignoreError);
+      } else {
+        const res = await snap.twitter(id);
+        const ext = getExtByContentType(res.contentType);
+        const dir = storage.path(`snap/${userId}/${id}.${ext}`);
+        const nodeReadable = Readable.fromWeb(res.body);
+        const nodeWriteStream = await dir.createWriteStream({
+          headers: {
+            "Content-Type": res.contentType,
+            "Content-Length": res.length,
+          },
+        });
+        await pipeline(nodeReadable, nodeWriteStream);
+        await linePush.sendMessage(`スナップしました\n${dir.url}`).catch(ignoreError);
+      }
     });
   }
 
-  for (const id of exportPixivUrl(event.text)) {
+  for (const [_, id] of exportPixivUrl(event.text)) {
     await errorHandler(async () => {
       const userId = body.source.userId ?? "unknown";
-      const res = await snap.pixiv(id[1]);
-      const ext = getExtByContentType(res.contentType);
-      const dir = await storage.path(`snap/${userId}/pixiv/${id[1]}.${ext}`);
-      const nodeReadable = Readable.fromWeb(res.body);
-      const nodeWriteStream = await dir.createWriteStream({
-        headers: {
-          "Content-Type": res.contentType,
-          "Content-Length": res.length,
-        },
-      });
-      await pipeline(nodeReadable, nodeWriteStream);
-      await linePush.sendMessage(`スナップしました\n${dir.url}`).catch(ignoreError);
+      const exists = await checkStorage(userId, id);
+      if (exists) {
+        await linePush.sendMessage(`既にスナップ済みです\n${exists}`).catch(ignoreError);
+      } else {
+        const res = await snap.pixiv(id);
+        const ext = getExtByContentType(res.contentType);
+        const dir = storage.path(`snap/${userId}/pixiv/${id}.${ext}`);
+        const nodeReadable = Readable.fromWeb(res.body);
+        const nodeWriteStream = await dir.createWriteStream({
+          headers: {
+            "Content-Type": res.contentType,
+            "Content-Length": res.length,
+          },
+        });
+        await pipeline(nodeReadable, nodeWriteStream);
+        await linePush.sendMessage(`スナップしました\n${dir.url}`).catch(ignoreError);
+      }
     });
   }
 });

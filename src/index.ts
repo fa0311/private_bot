@@ -155,7 +155,7 @@ lineClient.client.on("text", async ({ body, event }) => {
 lineClient.client.on("sticker", async ({ body, event }) => {
   if (getSourceId(body) !== env.LINE_SYNCHRONIZE_CHAT_CHANNEL_ID) return;
   const { stickerId } = event;
-  const dir = await storage.path(`sticker/${stickerId}.png`);
+  const dir = storage.path(`sticker/${stickerId}.png`);
   if (!(await dir.exists())) {
     const buffer = await getSticker(stickerId);
     await dir.putFileContents(buffer).catch(ignoreError);
@@ -192,7 +192,7 @@ lineClient.client.on("hasContents", async ({ body, event }) => {
         return event.fileName.split(".").slice(-1)[0];
     }
   })();
-  const dir = await storage.path(`${dateFormat("YYYY-MM")}/${event.id}.${extension}`);
+  const dir = storage.path(`${dateFormat("YYYY-MM")}/${event.id}.${extension}`);
   const readableStream = await lineClient.blob.getMessageContent(event.id);
   await dir.putFileContents(await streamToBuffer(readableStream)).catch(ignoreError);
   const profile = await lineClient.getProfile(body.source);
@@ -232,7 +232,7 @@ discordClient.client.on(Events.MessageCreate, async (message) => {
     const username = message.author.username;
     const results = await getUrl(e.proxyURL);
     const ext = getExtension(e.name);
-    const dir = await storage.path(`${dateFormat("YYYY-MM")}/${e.id}${ext}`);
+    const dir = storage.path(`${dateFormat("YYYY-MM")}/${e.id}${ext}`);
 
     if ([".jpeg", ".png", ".jpg"].includes(ext)) {
       if ("send" in message.channel && typeof message.channel.send === "function") {
