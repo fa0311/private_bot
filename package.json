@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@line/bot-sdk": "^10.1.2",
+    "async-mutex": "^0.5.0",
     "cheerio": "^1.1.2",
     "dayjs": "^1.11.13",
     "discord.js": "^14.22.1",
