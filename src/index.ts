@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, Events, GatewayIntentBits } from "discord.js";
+import { Events, GatewayIntentBits } from "discord.js";
 import pino from "pino";
 import { z } from "zod";
 import { createDiscordClient, getUrl } from "./utils/discord/discord.js";
@@ -216,90 +216,39 @@ discordClient.client.on(Events.MessageCreate, async (message) => {
     return `.${s.slice(-1)[0]}`;
   };
 
-  if (message.content !== "") {
-    const username = message.author.username;
-    const messageId = message.reference?.messageId;
+  const username = message.author.username;
+  const messageId = message.reference?.messageId;
+
+  const files = await Promise.all(
+    message.attachments.map(async (e) => {
+      const results = await getUrl(e.proxyURL);
+      const ext = getExtension(e.name);
+      const dir = storage.path(`${dateFormat("YYYY-MM")}/${e.id}${ext}`);
+      await dir.putFileContents(Buffer.from(results)).catch(ignoreError);
+      return dir;
+    }),
+  );
+
+  const baseText = (() => {
+    if (files.length > 0) {
+      const urls = files.map((file) => file.url);
+      return `${username}>>${message.cleanContent}\n${urls.join("\n")}`;
+    } else if (message.cleanContent.length > 0) {
+      return `${username}>>${message.cleanContent}`;
+    } else {
+      return null;
+    }
+  })();
+
+  if (baseText !== null) {
     if (messageId !== undefined) {
       const ref = await message.channel.messages.fetch(messageId);
-      const text = `${toSummary(`${ref.author.username}>>${ref.content}`)}\n[返信]${username}>>${message.content}`;
+      const text = `${toSummary(`${ref.author.username}>>${ref.cleanContent}`)}\n[返信]${baseText}`;
       await linePush.sendMessage(text).catch(ignoreError);
     } else {
-      await linePush.sendMessage(`${username}>>${message.content}`).catch(ignoreError);
+      await linePush.sendMessage(baseText).catch(ignoreError);
     }
   }
-
-  const res = message.attachments.map(async (e) => {
-    const username = message.author.username;
-    const results = await getUrl(e.proxyURL);
-    const ext = getExtension(e.name);
-    const dir = storage.path(`${dateFormat("YYYY-MM")}/${e.id}${ext}`);
-
-    if ([".jpeg", ".png", ".jpg"].includes(ext)) {
-      if ("send" in message.channel && typeof message.channel.send === "function") {
-        const button1 = new ButtonBuilder()
-          .setCustomId(`resend:${message.id}`)
-          .setEmoji("🔁")
-          .setLabel("再送信")
-          .setStyle(ButtonStyle.Primary);
-
-        const button2 = new ButtonBuilder()
-          .setCustomId(`url:${message.id}`)
-          .setEmoji("🔗")
-          .setLabel("URLとして送信")
-          .setStyle(ButtonStyle.Secondary);
-
-        const row = new ActionRowBuilder().addComponents(button1, button2);
-
-        const msg = await message.reply({
-          content: `送信が失敗している場合は、以下のボタンで再送信またはURL送信が可能です。`,
-          components: [row.toJSON()],
-        });
-        const controller = msg.createMessageComponentCollector({
-          componentType: ComponentType.Button,
-          time: 60 * 1000,
-        });
-        controller.on("collect", async (i) => {
-          if (i.customId === `resend:${message.id}`) {
-            await ignoreCallback(async () => {
-              await linePush.sendFile({
-                name: dir.name,
-                image: new Blob([results]),
-                message: message.content,
-                user: username,
-              });
-              await i.reply({ content: "再送信しました。", ephemeral: true });
-            });
-          } else if (i.customId === `url:${message.id}`) {
-            await ignoreCallback(async () => {
-              await linePush.sendMessage(dir.url);
-              await i.reply({ content: "URLを送信しました。", ephemeral: true });
-            });
-          }
-        });
-        controller.on("end", async () => {
-          await msg.delete().catch(ignoreError);
-        });
-        controller.on("error", async (error) => {
-          logger.error(error);
-        });
-
-        await dir.putFileContents(Buffer.from(results)).catch(ignoreError);
-        await linePush
-          .sendFile({
-            name: dir.name,
-            image: new Blob([results]),
-            message: message.content,
-            user: username,
-          })
-          .catch(ignoreError);
-      }
-    } else {
-      await dir.putFileContents(Buffer.from(results)).catch(ignoreError);
-      await linePush.sendMessage(dir.url).catch(ignoreError);
-    }
-  });
-
-  await Promise.all(res);
 });
 
 // Discordのボイスチャットの状態変化をLINEに転送
