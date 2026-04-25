@@ -121,6 +121,13 @@ discordClient.client.on("error", (error) => {
   logger.error(error);
 });
 
+lineClient.app.get("/health", (_, c) => {
+  const ready = discordClient.client.isReady();
+  const wsPing = discordClient.client.ws.ping;
+  const body = { ready, wsPing };
+  return c.status(ready ? 200 : 503).json(body);
+});
+
 discordClient.client.user?.setPresence({
   status: "online",
   activities: [

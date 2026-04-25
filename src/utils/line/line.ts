@@ -8,6 +8,7 @@ import {
   type WebhookEvent,
   type WebhookRequestBody,
 } from "@line/bot-sdk";
+import type core from "express";
 import express from "express";
 import type TypedEmitter from "typed-emitter";
 import type { SafeMerge } from "./utils";
@@ -42,7 +43,18 @@ type ConfigType = {
   channelSecret: string;
 };
 
-export const createLineClient = async (config: ConfigType, expressConfig: { port: number; route: string }) => {
+export type LineClient = {
+  client: EmitterTypes;
+  app: core.Express;
+  api: messagingApi.MessagingApiClient;
+  blob: messagingApi.MessagingApiBlobClient;
+  getProfile: (source: EventSource) => Promise<messagingApi.GroupUserProfileResponse>;
+};
+
+export const createLineClient = async (
+  config: ConfigType,
+  expressConfig: { port: number; route: string },
+): Promise<LineClient> => {
   const app = express();
   const client = new EventEmitter({
     captureRejections: true,
@@ -88,7 +100,7 @@ export const createLineClient = async (config: ConfigType, expressConfig: { port
     }
   };
 
-  return { client, api, blob, getProfile };
+  return { client, app, api, blob, getProfile };
 };
 
 export const getSourceId = (event: WebhookEvent): string => {
