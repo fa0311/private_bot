@@ -86,6 +86,9 @@ logger.info("Ready");
 lineClient.client.on("error", (error) => {
   logger.error(error);
 });
+lineClient.app.get("/health", (_, c) => {
+  return c.status(200).json({ status: "ok" });
+});
 
 const checkStorage = async (name: string) => {
   const existsCheck = await Promise.all(
