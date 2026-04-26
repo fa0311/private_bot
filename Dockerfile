@@ -16,7 +16,7 @@ COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --prod
 COPY --from=builder /app/dist ./dist
 
-HEALTHCHECK --interval=30s --timeout=30s --start-period=30s --retries=1 CMD curl -S --fail http://localhost:8080/health
+HEALTHCHECK --interval=1m --timeout=5s --start-period=20s --retries=1 CMD curl -S --fail http://localhost:8080/health
 
 EXPOSE 8080
 ENTRYPOINT ["pnpm", "start"]
