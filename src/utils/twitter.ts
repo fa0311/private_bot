@@ -14,7 +14,7 @@ export const tweetNormalize = (tweet: Tweet): string => {
     return tweetReplace(tweet.noteTweet.noteTweetResults.result.text);
   }
   if (tweet.legacy?.fullText) {
-    if ((tweet.legacy.entities.media ?? []).length > 0) {
+    if ((tweet.legacy.entities?.media ?? []).length > 0) {
       return tweetReplace(tweet.legacy.fullText.replace(/https:\/\/t\.co\/[a-zA-Z0-9]{10}$/, ""));
     } else {
       return tweetReplace(tweet.legacy.fullText);

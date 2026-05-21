@@ -1,5 +1,6 @@
 import { promises as fs } from "node:fs";
 import { TwitterOpenApi } from "twitter-openapi-typescript";
+import type { User } from "twitter-openapi-typescript-generated";
 import { exportTwitterUrl } from "./utils.js";
 
 export type Cookie = {
@@ -33,3 +34,7 @@ export const createTwitterClient = async (filename: string) => {
 
   return { fromText };
 };
+
+export const getUserName = (user: User) => user.core?.name ?? user.legacy.name ?? "";
+
+export const getUserAvatarUrl = (user: User) => user.avatar?.imageUrl ?? user.legacy.profileImageUrlHttps ?? "";

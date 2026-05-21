@@ -9,7 +9,7 @@ import { createLineClient, getSourceId, lineQuotedMessageManager } from "./utils
 import { getSticker } from "./utils/line/sticker.js";
 import { createLineNotifyClient } from "./utils/line/webhook.js";
 import { createWebdavClient, dateFormat, streamToBuffer } from "./utils/storage/storage.js";
-import { createTwitterClient } from "./utils/twitter/twitter.js";
+import { createTwitterClient, getUserName } from "./utils/twitter/twitter.js";
 import { tweetNormalize } from "./utils/twitter.js";
 
 const env = await getEnv(
@@ -300,18 +300,18 @@ lineClient.client.on("text", async ({ body, event }) => {
     if (response.data.data.length > 0) {
       const index = response.data.data.findIndex((e) => e.tweet.restId === id[2]);
       for (const tweet of response.data.data.slice(0, index)) {
-        text.push(tweet.user.legacy.name);
+        text.push(getUserName(tweet.user));
         text.push(tweetNormalize(tweet.tweet));
         text.push("----------");
       }
       const tweet = response.data.data[index];
       if (tweet !== undefined) {
         if (tweet.quoted) {
-          text.push(tweet.quoted.user.legacy.name);
+          text.push(getUserName(tweet.quoted.user));
           text.push(tweetNormalize(tweet.quoted.tweet));
           text.push("----------");
         }
-        text.push(tweet.user.legacy.name);
+        text.push(getUserName(tweet.user));
         text.push(tweetNormalize(tweet.tweet));
       }
     }
