@@ -1,13 +1,5 @@
 import { EventEmitter } from "node:events";
-import {
-  type EventMessage,
-  type EventSource,
-  type MessageEvent,
-  messagingApi,
-  middleware,
-  type WebhookEvent,
-  type WebhookRequestBody,
-} from "@line/bot-sdk";
+import { messagingApi, middleware, type webhook } from "@line/bot-sdk";
 import type core from "express";
 import express from "express";
 import type TypedEmitter from "typed-emitter";
@@ -16,19 +8,22 @@ import type { SafeMerge } from "./utils";
 const hasContentsType = ["image", "video", "audio", "file"] as const;
 
 type WebhookEventCallbackType = {
-  [M in WebhookEvent["type"]]: (body: { body: Extract<WebhookEvent, { type: M }> }) => void;
+  [M in webhook.Event["type"]]: (body: { body: Extract<webhook.Event, { type: M }> }) => void;
 };
 
 type EventMessageCallbackType = {
-  [M in EventMessage["type"]]: (body: { body: MessageEvent; event: Extract<EventMessage, { type: M }> }) => void;
+  [M in webhook.MessageContent["type"]]: (body: {
+    body: webhook.MessageEvent;
+    event: Extract<webhook.MessageContent, { type: M }>;
+  }) => void;
 };
 
 type DefinedCallbackType = {
   hasContents: (body: {
-    body: MessageEvent;
-    event: Extract<EventMessage, { type: (typeof hasContentsType)[number] }>;
+    body: webhook.MessageEvent;
+    event: Extract<webhook.MessageContent, { type: (typeof hasContentsType)[number] }>;
   }) => void;
-  all: (body: { body: WebhookEvent }) => void;
+  all: (body: { body: webhook.Event }) => void;
   error: (error: Error) => void;
 };
 
@@ -48,7 +43,7 @@ export type LineClient = {
   app: core.Express;
   api: messagingApi.MessagingApiClient;
   blob: messagingApi.MessagingApiBlobClient;
-  getProfile: (source: EventSource) => Promise<messagingApi.GroupUserProfileResponse>;
+  getProfile: (source?: webhook.Source) => Promise<messagingApi.GroupUserProfileResponse>;
 };
 
 export const createLineClient = async (
@@ -63,7 +58,7 @@ export const createLineClient = async (
   const blob = new messagingApi.MessagingApiBlobClient(config);
 
   app.post(expressConfig.route, middleware(config), (req) => {
-    const body = req.body as WebhookRequestBody;
+    const body = req.body as webhook.CallbackRequest;
 
     for (const event of body.events) {
       client.emit("all", { body: event });
@@ -81,37 +76,30 @@ export const createLineClient = async (
     app.listen(expressConfig.port, () => resolve());
   });
 
-  const getProfile = async (source: EventSource) => {
+  const getProfile = async (source?: webhook.Source) => {
+    if (source?.userId == null) {
+      throw new Error("No userId");
+    }
     switch (source.type) {
       case "user":
         return api.getProfile(source.userId);
       case "group":
-        if (source.userId == null) {
-          throw new Error("No userId");
-        } else {
-          return api.getGroupMemberProfile(source.groupId, source.userId);
-        }
+        return api.getGroupMemberProfile(source.groupId, source.userId);
       case "room":
-        if (source.userId == null) {
-          throw new Error("No userId");
-        } else {
-          return api.getRoomMemberProfile(source.roomId, source.userId);
-        }
+        return api.getRoomMemberProfile(source.roomId, source.userId);
     }
   };
 
   return { client, app, api, blob, getProfile };
 };
 
-export const getSourceId = (event: WebhookEvent): string => {
-  switch (event.source.type) {
-    case "user":
-      return event.source.userId;
-    case "group":
-      return event.source.groupId;
-    case "room":
-      return event.source.roomId;
+export const getSourceId = (event: webhook.Event): string => {
+  const source = event.source;
+  const id = source?.type === "group" ? source.groupId : source?.type === "room" ? source.roomId : source?.userId;
+  if (id == null) {
+    throw new Error("No source id");
   }
+  return id;
 };
 
 type QuotedEventMessage = {

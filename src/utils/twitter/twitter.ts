@@ -35,6 +35,6 @@ export const createTwitterClient = async (filename: string) => {
   return { fromText };
 };
 
-export const getUserName = (user: User) => user.core?.name ?? user.legacy.name ?? "";
+export const getUserName = (user: User) => user.core?.name ?? user.legacy?.name ?? "";
 
-export const getUserAvatarUrl = (user: User) => user.avatar?.imageUrl ?? user.legacy.profileImageUrlHttps ?? "";
+export const getUserAvatarUrl = (user: User) => user.avatar?.imageUrl ?? user.legacy?.profileImageUrlHttps ?? "";

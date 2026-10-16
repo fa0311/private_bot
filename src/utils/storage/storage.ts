@@ -1,4 +1,4 @@
-import type { Readable } from "node:stream";
+import type { Readable, Writable } from "node:stream";
 import dayjs from "dayjs";
 import { createClient, type WebDAVClient } from "webdav";
 
@@ -54,7 +54,8 @@ export const createWebdavClient = (config: WebdavConfig) => {
 
     const createWriteStream = async (options?: Parameters<WebDAVClient["createWriteStream"]>[1]) => {
       await makedirs({ file: storagePath });
-      return client.createWriteStream(storagePath, options);
+      // webdav 5.11 types the stream as WritableLike; the node build returns a PassThrough
+      return client.createWriteStream(storagePath, options) as Writable;
     };
     const putFileContents = async (data: ByteType) => {
       await makedirs({ file: storagePath });

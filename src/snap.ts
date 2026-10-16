@@ -107,7 +107,7 @@ lineClient.client.on("text", async ({ body, event }) => {
   await mutex.runExclusive(async () => {
     for (const [_, __, id] of exportTwitterUrl(event.text)) {
       await errorHandler(async () => {
-        const userId = body.source.userId ?? "unknown";
+        const userId = body.source?.userId ?? "unknown";
         const exists = await checkStorage(`snap/${userId}/${id}`);
         if (exists) {
           await linePush.sendMessage(`既にスナップ済みです\n${exists}`).catch(ignoreError);
@@ -130,7 +130,7 @@ lineClient.client.on("text", async ({ body, event }) => {
 
     for (const [_, id] of exportPixivUrl(event.text)) {
       await errorHandler(async () => {
-        const userId = body.source.userId ?? "unknown";
+        const userId = body.source?.userId ?? "unknown";
         const exists = await checkStorage(`snap/${userId}/pixiv/${id}`);
         if (exists) {
           await linePush.sendMessage(`既にスナップ済みです\n${exists}`).catch(ignoreError);
@@ -156,6 +156,7 @@ lineClient.client.on("text", async ({ body, event }) => {
 // デバッグ用
 lineClient.client.on("text", async ({ body, event }) => {
   const replyToken = body.replyToken;
+  if (replyToken == null) return;
 
   if (event.text === "/receive") {
     lineClient.client.once("all", async ({ body }) => {
