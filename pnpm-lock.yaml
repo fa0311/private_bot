@@ -194,11 +194,11 @@ importers:
         specifier: ^13.2.0
         version: 13.2.0
       twitter-openapi-typescript:
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: ^0.1.1
+        version: 0.1.1
       twitter-openapi-typescript-generated:
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: ^0.1.1
+        version: 0.1.1
       webdav:
         specifier: ^5.11.0
         version: 5.11.0
@@ -1481,11 +1481,11 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
 
-  twitter-openapi-typescript-generated@0.1.0:
-    resolution: {integrity: sha512-KJEO2W66beQKDa9T0LUo8qto4+xXWzy+77wsU1pUpGtSH8LUT/sKOpif2kEDFhyIycthZMcR2FXjhKufOkbBYQ==}
+  twitter-openapi-typescript-generated@0.1.1:
+    resolution: {integrity: sha512-zse0zAs854eWsSHrNxCvkTx73uvlehKrM2igPPv0V2xOfGhR3bmzDhchw3WZ7B4DuNIMN8ZwQ+lZx/KkBkDnrw==}
 
-  twitter-openapi-typescript@0.1.0:
-    resolution: {integrity: sha512-qZRLeMjZodCaxgpIUagHjvWA6RQwjEcuIi2u8mMTld6S2LbYxQItW3uiewEue6ZOlB/nRLEhZYkMLn3K9dwVhg==}
+  twitter-openapi-typescript@0.1.1:
+    resolution: {integrity: sha512-rts9RzUgLYqW4MxGAT6onQfQUJJU01qB4I1LfxvbUSk/+BZHjB7Qmp6L21D6E2Zubv3ZnpnKq05ThzgeQDUTQg==}
 
   type-is@2.1.0:
     resolution: {integrity: sha512-faYHw0anBbc/kWF3zFTEnxSFOAGUX9GFbOBthvDdLsIlEoWOFOtS0zgCiQYwIskL9iGXZL3kAXD8OoZ4GmMATA==}
@@ -2788,11 +2788,11 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  twitter-openapi-typescript-generated@0.1.0: {}
+  twitter-openapi-typescript-generated@0.1.1: {}
 
-  twitter-openapi-typescript@0.1.0:
+  twitter-openapi-typescript@0.1.1:
     dependencies:
-      twitter-openapi-typescript-generated: 0.1.0
+      twitter-openapi-typescript-generated: 0.1.1
       x-client-transaction-id-generater: 0.0.7
 
   type-is@2.1.0:
