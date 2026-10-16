@@ -99,9 +99,6 @@ const storage = createWebdavClient({
 const twitterClient = await createTwitterClient(env.TWITTER_COOKIE_FILE);
 
 const ignoreError = (error: unknown) => logger.error(error);
-const ignoreCallback = async (callback: () => Promise<unknown>) => {
-  await callback().catch(ignoreError);
-};
 
 const pushMessage = async (text: string) => {
   await linePush.sendMessage(text).catch(ignoreError);
@@ -317,7 +314,7 @@ lineClient.client.on("text", async ({ body, event }) => {
     }
   }
 
-  if (text.length > 0) {
+  if (text.length > 0 && body.replyToken) {
     await lineClient.api
       .replyMessage({
         replyToken: body.replyToken,
@@ -335,6 +332,7 @@ lineClient.client.on("text", async ({ body, event }) => {
 // デバッグ用
 lineClient.client.on("text", async ({ body, event }) => {
   const replyToken = body.replyToken;
+  if (replyToken == null) return;
 
   if (event.text === "/receive") {
     lineClient.client.once("all", async ({ body }) => {

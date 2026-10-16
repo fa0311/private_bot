@@ -1,3 +1,5 @@
+allowBuilds:
+  esbuild: true
 minimumReleaseAgeExclude:
   - twitter-openapi-typescript
   - twitter-openapi-typescript-generated
