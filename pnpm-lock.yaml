@@ -194,11 +194,11 @@ importers:
         specifier: ^13.2.0
         version: 13.2.0
       twitter-openapi-typescript:
+        specifier: ^0.1.7
+        version: 0.1.7
+      twitter-openapi-typescript-generated:
         specifier: ^0.1.6
         version: 0.1.6
-      twitter-openapi-typescript-generated:
-        specifier: ^0.1.5
-        version: 0.1.5
       webdav:
         specifier: ^5.11.0
         version: 5.11.0
@@ -818,8 +818,8 @@ packages:
   base-64@1.0.0:
     resolution: {integrity: sha512-kwDPIFCGx0NZHog36dj+tHiwP4QMzsZ3AgMViUBKI0+V5n4U0ufTCUMhnQ04diaRI8EX/QcPfql7zlhZ7j4zgg==}
 
-  body-parser@2.3.0:
-    resolution: {integrity: sha512-2cGmJupaNgg+QUwVLAucDuWuoMZ6EX9iHDRswZ5lsNYEmwPaRknMPCLZz07yTzVq/83p4o/wzbDZbBrTvGGTIw==}
+  body-parser@2.4.0:
+    resolution: {integrity: sha512-Ifk1KcLrxaGt1occQagQNFNNOqRt1LFuehEnHHzB8Z6cRgIxRU1TBaiIsUiCdA+gy5PL7Y1IX31DNKkRmxtXjQ==}
     engines: {node: '>=18'}
 
   boolbase@1.0.0:
@@ -1481,11 +1481,11 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
 
-  twitter-openapi-typescript-generated@0.1.5:
-    resolution: {integrity: sha512-B74ffHYJjhcpkkTzt9+UpwzgKdzN9guYsT/gKnJS+0Fp8+Y7N2HVFYgv3C1EWjDUAP4/ohY2/S2Xdql7+JSi6A==}
+  twitter-openapi-typescript-generated@0.1.6:
+    resolution: {integrity: sha512-WePbM0HrvnR7RrE3Dbo0AD1tbEmYXLFmjbIpp/En6fXO+2QHP2rUfv2xmrV+kMvcF9NFG111j9yTm8boMiz0UQ==}
 
-  twitter-openapi-typescript@0.1.6:
-    resolution: {integrity: sha512-1JHEu3YQe2Oqqw5shbjKZK2bvedR17nxdrCSaj6Hx6niv3Bgjn432DYD9rgIuPo+aHf3kOBxdYG46SmU4a3UoQ==}
+  twitter-openapi-typescript@0.1.7:
+    resolution: {integrity: sha512-inf3GDLcp73jNUGv6ieMZTSZNscgNgKe05TcZZYLw5JblF/v/2bykcOzjswhtjKf/Bke+tEOUjR9cqH09OWMkQ==}
 
   type-is@2.1.0:
     resolution: {integrity: sha512-faYHw0anBbc/kWF3zFTEnxSFOAGUX9GFbOBthvDdLsIlEoWOFOtS0zgCiQYwIskL9iGXZL3kAXD8OoZ4GmMATA==}
@@ -1505,12 +1505,12 @@ packages:
   undici-types@8.9.0:
     resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
 
-  undici@6.29.0:
-    resolution: {integrity: sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg==}
+  undici@6.29.1:
+    resolution: {integrity: sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==}
     engines: {node: '>=18.17'}
 
-  undici@7.30.0:
-    resolution: {integrity: sha512-dkrQXeHSaoamnItlYbmzG0wFYrM0ZwDxCIg0A7aKjTyyhh9svRzCNFEzV+Vm05/yehjCzjDZ31KXfGEjYSztDQ==}
+  undici@7.30.2:
+    resolution: {integrity: sha512-mLyPQnHwUxaM/rideoK/+KL8DaAJLRl4aBCfmX444aCSLnIaomqPLtNRe2jdCYcsk5wZzXrDIQC8ZeYNRAYyIA==}
     engines: {node: '>=20.18.1'}
 
   unpipe@1.0.0:
@@ -1728,7 +1728,7 @@ snapshots:
       discord-api-types: 0.38.56
       magic-bytes.js: 1.13.1
       tslib: 2.8.1
-      undici: 6.29.0
+      undici: 6.29.1
 
   '@discordjs/util@1.2.0':
     dependencies:
@@ -2052,7 +2052,7 @@ snapshots:
 
   base-64@1.0.0: {}
 
-  body-parser@2.3.0:
+  body-parser@2.4.0:
     dependencies:
       bytes: 3.1.2
       content-type: 2.1.0
@@ -2110,7 +2110,7 @@ snapshots:
       parse5: 7.3.0
       parse5-htmlparser2-tree-adapter: 7.1.0
       parse5-parser-stream: 7.1.2
-      undici: 7.30.0
+      undici: 7.30.2
       whatwg-mimetype: 4.0.0
 
   colorette@2.0.20: {}
@@ -2165,7 +2165,7 @@ snapshots:
       lodash.snakecase: 4.1.1
       magic-bytes.js: 1.13.1
       tslib: 2.8.1
-      undici: 6.29.0
+      undici: 6.29.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -2267,7 +2267,7 @@ snapshots:
   express@5.3.0:
     dependencies:
       accepts: 2.0.0
-      body-parser: 2.3.0
+      body-parser: 2.4.0
       content-disposition: 2.0.1
       content-type: 2.1.0
       cookie: 0.7.2
@@ -2788,11 +2788,11 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  twitter-openapi-typescript-generated@0.1.5: {}
+  twitter-openapi-typescript-generated@0.1.6: {}
 
-  twitter-openapi-typescript@0.1.6:
+  twitter-openapi-typescript@0.1.7:
     dependencies:
-      twitter-openapi-typescript-generated: 0.1.5
+      twitter-openapi-typescript-generated: 0.1.6
       x-client-transaction-id-generater: 0.0.7
 
   type-is@2.1.0:
@@ -2832,9 +2832,9 @@ snapshots:
 
   undici-types@8.9.0: {}
 
-  undici@6.29.0: {}
+  undici@6.29.1: {}
 
-  undici@7.30.0: {}
+  undici@7.30.2: {}
 
   unpipe@1.0.0: {}
 
